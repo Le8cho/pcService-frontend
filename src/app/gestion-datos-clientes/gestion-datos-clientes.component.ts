@@ -76,21 +76,30 @@ export class GestionDatosClientesComponent implements OnInit {
     guardarCliente() {
         if (this.validarCliente()) {
             if (this.modoEdicion) {
-                this.clienteService.actualizarCliente(this.clienteSeleccionado);
-                this.messageService.add({
-                    severity: 'success',
-                    summary: 'Cliente actualizado',
-                    detail: 'Los datos del cliente han sido actualizados exitosamente'
+                this.clienteService.actualizarCliente(this.clienteSeleccionado).subscribe({
+                    next: () => {
+                        this.messageService.add({
+                            severity: 'success',
+                            summary: 'Cliente actualizado',
+                            detail: 'Los datos del cliente han sido actualizados exitosamente'
+                        });
+                        this.cargarClientes();
+                        this.ocultarDialog();
+                    }
                 });
             } else {
-                this.clienteService.agregarCliente(this.clienteSeleccionado);
-                this.messageService.add({
-                    severity: 'success',
-                    summary: 'Cliente registrado',
-                    detail: 'Cliente registrado exitosamente'
+                this.clienteService.agregarCliente(this.clienteSeleccionado).subscribe({
+                    next: () => {
+                        this.messageService.add({
+                            severity: 'success',
+                            summary: 'Cliente registrado',
+                            detail: 'Cliente registrado exitosamente'
+                        });
+                        this.cargarClientes();
+                        this.ocultarDialog();
+                    }
                 });
             }
-            this.ocultarDialog();
         }
     }
 
@@ -103,12 +112,32 @@ export class GestionDatosClientesComponent implements OnInit {
             rejectLabel: 'Cancelar',
             acceptButtonStyleClass: 'p-button-danger',
             accept: () => {
-                if (cliente.id) {
-                    this.clienteService.eliminarCliente(cliente.id);
-                    this.messageService.add({
-                        severity: 'success',
-                        summary: 'Cliente eliminado',
-                        detail: 'Cliente eliminado exitosamente'
+                if (cliente.id_cliente) {
+                    this.clienteService.eliminarCliente(cliente.id_cliente).subscribe({
+                        next: () => {
+                            this.messageService.add({
+                                severity: 'success',
+                                summary: 'Cliente eliminado',
+                                detail: 'Cliente eliminado exitosamente'
+                            });
+                            this.cargarClientes();
+                        },
+                        error: (err) => {
+                            // Manejo de error por restricción de integridad
+                            if (err.error && err.error.error && err.error.error.includes('ORA-02292')) {
+                                this.messageService.add({
+                                    severity: 'error',
+                                    summary: 'No se puede eliminar',
+                                    detail: 'No se puede eliminar el cliente porque tiene operaciones asociadas.'
+                                });
+                            } else {
+                                this.messageService.add({
+                                    severity: 'error',
+                                    summary: 'Error',
+                                    detail: 'Ocurrió un error al eliminar el cliente.'
+                                });
+                            }
+                        }
                     });
                 }
             }
@@ -117,8 +146,12 @@ export class GestionDatosClientesComponent implements OnInit {
 
     buscarClientes() {
         if (this.terminoBusqueda.trim()) {
-            this.clienteService.buscarClientes(this.terminoBusqueda).subscribe(clientes => {
-                this.clientes = clientes;
+            this.clienteService.getClientes().subscribe((clientes: Cliente[]) => {
+                this.clientes = clientes.filter(cliente =>
+                    cliente.nombre.toLowerCase().includes(this.terminoBusqueda.toLowerCase()) ||
+                    cliente.apellido.toLowerCase().includes(this.terminoBusqueda.toLowerCase()) ||
+                    cliente.correo.toLowerCase().includes(this.terminoBusqueda.toLowerCase())
+                );
             });
         } else {
             this.cargarClientes();

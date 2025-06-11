@@ -48,7 +48,7 @@
 
                 <ng-template pTemplate="body" let-cliente>
                     <tr>
-                        <td>{{ cliente.id }}</td>
+                        <td>{{ cliente.id_cliente }}</td>
                         <td>{{ cliente.nombre }}</td>
                         <td>{{ cliente.apellido }}</td>
                         <td>{{ cliente.direccion }}</td>
@@ -93,12 +93,12 @@
     
     <div class="flex flex-column gap-3">
         <div *ngIf="modoEdicion" class="field">
-            <label for="id" class="font-semibold">ID</label>
+            <label for="id_cliente" class="font-semibold">ID</label>
             <input 
                 type="text" 
                 pInputText 
-                id="id" 
-                [(ngModel)]="clienteSeleccionado.id"
+                id="id_cliente" 
+                [(ngModel)]="clienteSeleccionado.id_cliente"
                 [disabled]="true"
                 class="w-full"
             />
