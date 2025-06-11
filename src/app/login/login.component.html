@@ -1,1 +1,22 @@
-<p>login works!</p>
+<!-- src/app/login/login.component.html -->
+<div class="flex align-items-center justify-content-center h-screen">
+  <div class="surface-card p-4 shadow-2 border-round w-full lg:w-4">
+    <div class="text-center mb-5">
+      <div class="text-900 text-3xl font-medium mb-3">¡Bienvenido a PCService!</div>
+      <span class="text-600 font-medium line-height-3">Inicia sesión para continuar</span>
+    </div>
+
+    <form (ngSubmit)="onSubmit()" [formGroup]="loginForm">
+      <label for="nombre_usuario" class="block text-900 font-medium mb-2">Usuario</label>
+      <input id="nombre_usuario" type="text" pInputText class="w-full mb-3" formControlName="nombre_usuario">
+
+      <label for="contrasena" class="block text-900 font-medium mb-2">Contraseña</label>
+      <input id="contrasena" type="password" pInputText class="w-full mb-3" formControlName="contrasena">
+
+      <!-- Mensaje de error -->
+      <p-message *ngIf="errorMessage" severity="error" [text]="errorMessage"></p-message>
+
+      <button pButton pRipple label="Iniciar Sesión" icon="pi pi-user" class="w-full mt-3" [loading]="loading"></button>
+    </form>
+  </div>
+</div>
