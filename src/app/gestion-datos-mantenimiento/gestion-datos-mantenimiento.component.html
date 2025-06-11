@@ -167,31 +167,31 @@
                 
                 <ng-template pTemplate="content">
                     <div class="field">
-                        <label for="mantPrev">#MantPrev *</label>
+                        <label for="equipos">Equipos/Descripción *</label>
                         <input 
                             type="text" 
                             pInputText 
-                            id="mantPrev" 
-                            [(ngModel)]="mantenimientoForm.mantPrev" 
+                            id="equipos" 
+                            [(ngModel)]="mantenimientoForm.equipos" 
                             required 
                             autofocus 
-                            [ngClass]="{'ng-invalid ng-dirty' : !mantenimientoForm.mantPrev}">
-                        <small class="ng-dirty ng-invalid" *ngIf="!mantenimientoForm.mantPrev">
-                            #MantPrev es requerido.
+                            [ngClass]="{'ng-invalid ng-dirty' : !mantenimientoForm.equipos}">
+                        <small class="ng-dirty ng-invalid" *ngIf="!mantenimientoForm.equipos">
+                            Descripción del equipo es requerida.
                         </small>
                     </div>
 
                     <div class="field">
-                        <label for="codCliente">Cod_Cliente *</label>
-                        <input 
-                            type="text" 
-                            pInputText 
-                            id="codCliente" 
-                            [(ngModel)]="mantenimientoForm.cod_cliente" 
-                            required
+                        <label for="codCliente">Cliente *</label>
+                        <p-dropdown 
+                            id="codCliente"
+                            [(ngModel)]="mantenimientoForm.cod_cliente"
+                            [options]="clienteOptions"
+                            placeholder="Seleccionar cliente"
                             [ngClass]="{'ng-invalid ng-dirty' : !mantenimientoForm.cod_cliente}">
+                        </p-dropdown>
                         <small class="ng-dirty ng-invalid" *ngIf="!mantenimientoForm.cod_cliente">
-                            Código de cliente es requerido.
+                            Cliente es requerido.
                         </small>
                     </div>
 
@@ -207,41 +207,6 @@
                         </div>
 
                         <div class="field col">
-                            <label for="equipos">Equipos *</label>
-                            <input 
-                                type="text" 
-                                pInputText 
-                                id="equipos" 
-                                [(ngModel)]="mantenimientoForm.equipos" 
-                                required
-                                [ngClass]="{'ng-invalid ng-dirty' : !mantenimientoForm.equipos}">
-                        </div>
-                    </div>
-
-                    <div class="formgrid grid">
-                        <div class="field col">
-                            <label for="ingreso">Ingreso</label>
-                            <p-calendar 
-                                id="ingreso"
-                                [(ngModel)]="mantenimientoForm.ingreso"
-                                dateFormat="dd/mm/yy"
-                                [showIcon]="true">
-                            </p-calendar>
-                        </div>
-
-                        <div class="field col">
-                            <label for="egreso">Egreso</label>
-                            <p-calendar 
-                                id="egreso"
-                                [(ngModel)]="mantenimientoForm.egreso"
-                                dateFormat="dd/mm/yy"
-                                [showIcon]="true">
-                            </p-calendar>
-                        </div>
-                    </div>
-
-                    <div class="formgrid grid">
-                        <div class="field col">
                             <label for="frecuencia">Frecuencia *</label>
                             <p-dropdown 
                                 id="frecuencia"
@@ -251,16 +216,40 @@
                                 [ngClass]="{'ng-invalid ng-dirty' : !mantenimientoForm.frecuencia}">
                             </p-dropdown>
                         </div>
+                    </div>
+
+                    <div class="formgrid grid">
+                        <div class="field col">
+                            <label for="ingreso">Ingreso (S/.)</label>
+                            <input 
+                                type="number" 
+                                pInputText 
+                                id="ingreso" 
+                                [(ngModel)]="mantenimientoForm.ingreso"
+                                step="0.01"
+                                min="0">
+                        </div>
 
                         <div class="field col">
-                            <label for="proxFecha">Próxima Fecha</label>
-                            <p-calendar 
-                                id="proxFecha"
-                                [(ngModel)]="mantenimientoForm.prox_fecha"
-                                dateFormat="dd/mm/yy"
-                                [showIcon]="true">
-                            </p-calendar>
+                            <label for="egreso">Egreso (S/.)</label>
+                            <input 
+                                type="number" 
+                                pInputText 
+                                id="egreso" 
+                                [(ngModel)]="mantenimientoForm.egreso"
+                                step="0.01"
+                                min="0">
                         </div>
+                    </div>
+
+                    <div class="field">
+                        <label for="proxFecha">Próxima Fecha</label>
+                        <p-calendar 
+                            id="proxFecha"
+                            [(ngModel)]="mantenimientoForm.prox_fecha"
+                            dateFormat="dd/mm/yy"
+                            [showIcon]="true">
+                        </p-calendar>
                     </div>
                 </ng-template>
 

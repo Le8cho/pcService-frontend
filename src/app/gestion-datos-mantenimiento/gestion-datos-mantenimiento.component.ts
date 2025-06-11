@@ -2,6 +2,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
 import { ConfirmationService, MessageService } from 'primeng/api';
 
 // PrimeNG Imports
@@ -17,7 +18,8 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { TooltipModule } from 'primeng/tooltip';
 import { RippleModule } from 'primeng/ripple';
 
-import { Mantenimiento, MantenimientoForm } from '../models/mantenimiento.interface';
+import { Mantenimiento, MantenimientoForm, Cliente } from '../models/mantenimiento.interface';
+import { MantenimientoService } from '../ServiciosSIST/api.service';
 
 @Component({
     selector: 'app-gestion-datos-mantenimiento',
@@ -25,6 +27,7 @@ import { Mantenimiento, MantenimientoForm } from '../models/mantenimiento.interf
     imports: [
         CommonModule,
         FormsModule,
+        HttpClientModule,
         TableModule,
         ToastModule,
         CalendarModule,
@@ -39,11 +42,12 @@ import { Mantenimiento, MantenimientoForm } from '../models/mantenimiento.interf
     ],
     templateUrl: './gestion-datos-mantenimiento.component.html',
     styleUrls: ['./gestion-datos-mantenimiento.component.scss'],
-    providers: [MessageService, ConfirmationService]
+    providers: [MessageService, ConfirmationService, MantenimientoService]
 })
 export class GestionDatosMantenimientoComponent implements OnInit {
 
     mantenimientos: Mantenimiento[] = [];
+    clientes: Cliente[] = [];
     mantenimientoDialog: boolean = false;
     editMode: boolean = false;
     mantenimientoForm: MantenimientoForm = this.resetForm();
@@ -54,84 +58,64 @@ export class GestionDatosMantenimientoComponent implements OnInit {
     // Opciones para dropdowns
     frecuenciaOptions = [
         { label: 'Mensual', value: 'Mensual' },
+        { label: 'Bimestral', value: 'Bimestral' },
         { label: 'Trimestral', value: 'Trimestral' },
         { label: 'Semestral', value: 'Semestral' },
         { label: 'Anual', value: 'Anual' }
     ];
 
+    clienteOptions: any[] = [];
+
     constructor(
         private messageService: MessageService,
-        private confirmationService: ConfirmationService
+        private confirmationService: ConfirmationService,
+        private mantenimientoService: MantenimientoService
     ) {}
 
     ngOnInit() {
+        this.loadClientes();
         this.loadMantenimientos();
+    }
+
+    loadClientes() {
+        this.mantenimientoService.getClientes().subscribe({
+            next: (clientes) => {
+                this.clientes = clientes;
+                this.clienteOptions = clientes.map(cliente => ({
+                    label: `${cliente.nombre} ${cliente.apellido} (${this.mantenimientoService.generateClienteCode(cliente.id_cliente || 0)})`,
+                    value: cliente.id_cliente
+                }));
+            },
+            error: (error) => {
+                console.error('Error al cargar clientes:', error);
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Error',
+                    detail: 'No se pudieron cargar los clientes',
+                    life: 3000
+                });
+            }
+        });
     }
 
     loadMantenimientos() {
         this.loading = true;
-        // Datos de prueba
-        setTimeout(() => {
-            this.mantenimientos = [
-                {
-                    id_operacion: 1,
-                    mantPrev: 'MP001',
-                    cod_cliente: 'CL001',
-                    nombre_cliente: 'Juan Pérez',
-                    fecha: '2023-10-15',
-                    equipos: 'Laptop Dell XPS',
-                    ingreso: 2023.15,
-                    egreso: 2023.10,
-                    frecuencia: 'Mensual',
-                    prox_mantenimiento: '2023-11-15',
-                    id_cliente: 1,
-                    tipo_operacion: 'MANTENIMIENTO'
-                },
-                {
-                    id_operacion: 2,
-                    mantPrev: 'MP002',
-                    cod_cliente: 'CL002',
-                    nombre_cliente: 'María García',  
-                    fecha: '2023-10-18',
-                    equipos: 'PC Desktop HP',
-                    ingreso: 2023.18,
-                    egreso: 2023.19,
-                    frecuencia: 'Trimestral',
-                    prox_mantenimiento: '2024-01-18',
-                    id_cliente: 2,
-                    tipo_operacion: 'MANTENIMIENTO'
-                },
-                {
-                    id_operacion: 3,
-                    mantPrev: 'MP003',
-                    cod_cliente: 'CL003',
-                    nombre_cliente: 'Carlos López',
-                    fecha: '2023-10-20',
-                    equipos: 'MacBook Pro',
-                    ingreso: 2023.20,
-                    egreso: 2023.21,
-                    frecuencia: 'Semestral',
-                    prox_mantenimiento: '2024-04-20',
-                    id_cliente: 3,
-                    tipo_operacion: 'MANTENIMIENTO'
-                },
-                {
-                    id_operacion: 4,
-                    mantPrev: 'MP004',
-                    cod_cliente: 'CL004',
-                    nombre_cliente: 'Ana Martínez',
-                    fecha: '2023-10-22',
-                    equipos: 'Lenovo ThinkPad',
-                    ingreso: 2023.22,
-                    egreso: 2023.23,
-                    frecuencia: 'Mensual',
-                    prox_mantenimiento: '2023-11-22',
-                    id_cliente: 4,
-                    tipo_operacion: 'MANTENIMIENTO'
-                }
-            ];
-            this.loading = false;
-        }, 1000);
+        this.mantenimientoService.getMantenimientos().subscribe({
+            next: (mantenimientos) => {
+                this.mantenimientos = mantenimientos;
+                this.loading = false;
+            },
+            error: (error) => {
+                console.error('Error al cargar mantenimientos:', error);
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Error',
+                    detail: 'No se pudieron cargar los mantenimientos',
+                    life: 3000
+                });
+                this.loading = false;
+            }
+        });
     }
 
     openNew() {
@@ -143,9 +127,13 @@ export class GestionDatosMantenimientoComponent implements OnInit {
     editMantenimiento(mantenimiento: Mantenimiento) {
         this.selectedMantenimiento = mantenimiento;
         this.editMode = true;
+        
+        // Convertir el código de cliente (CL001) a ID numérico
+        const clienteId = this.mantenimientoService.extractClienteId(mantenimiento.cod_cliente || '');
+        
         this.mantenimientoForm = {
-            mantPrev: mantenimiento.mantPrev || '',
-            cod_cliente: mantenimiento.cod_cliente || '',
+            mantPrev: mantenimiento.mant_prev || '',
+            cod_cliente: clienteId,
             fecha_mantenimiento: new Date(mantenimiento.fecha || ''),
             equipos: mantenimiento.equipos || '',
             ingreso: mantenimiento.ingreso || 0,
@@ -158,76 +146,101 @@ export class GestionDatosMantenimientoComponent implements OnInit {
 
     deleteMantenimiento(mantenimiento: Mantenimiento) {
         this.confirmationService.confirm({
-            message: `¿Está seguro de eliminar el mantenimiento ${mantenimiento.mantPrev}?`,
+            message: `¿Está seguro de eliminar el mantenimiento ${mantenimiento.mant_prev}?`,
             header: 'Confirmar',
             icon: 'pi pi-exclamation-triangle',
             accept: () => {
-                this.mantenimientos = this.mantenimientos.filter(val => val.id_operacion !== mantenimiento.id_operacion);
-                this.messageService.add({
-                    severity: 'success',
-                    summary: 'Exitoso',
-                    detail: 'Mantenimiento eliminado',
-                    life: 3000
-                });
+                if (mantenimiento.id_operacion) {
+                    this.mantenimientoService.deleteMantenimiento(mantenimiento.id_operacion).subscribe({
+                        next: () => {
+                            this.mantenimientos = this.mantenimientos.filter(val => val.id_operacion !== mantenimiento.id_operacion);
+                            this.messageService.add({
+                                severity: 'success',
+                                summary: 'Exitoso',
+                                detail: 'Mantenimiento eliminado',
+                                life: 3000
+                            });
+                        },
+                        error: (error) => {
+                            console.error('Error al eliminar:', error);
+                            this.messageService.add({
+                                severity: 'error',
+                                summary: 'Error',
+                                detail: 'No se pudo eliminar el mantenimiento',
+                                life: 3000
+                            });
+                        }
+                    });
+                }
             }
         });
     }
 
     saveMantenimiento() {
         if (this.validateForm()) {
+            const formData = {
+                id_cliente: this.mantenimientoForm.cod_cliente,
+                equipos: this.mantenimientoForm.equipos,
+                frecuencia: this.mantenimientoForm.frecuencia,
+                fecha_mantenimiento: this.mantenimientoForm.fecha_mantenimiento,
+                prox_fecha: this.mantenimientoForm.prox_fecha,
+                ingreso: this.mantenimientoForm.ingreso,
+                egreso: this.mantenimientoForm.egreso
+            };
+
             if (this.editMode && this.selectedMantenimiento) {
                 // Actualizar mantenimiento existente
-                const index = this.mantenimientos.findIndex(m => m.id_operacion === this.selectedMantenimiento!.id_operacion);
-                if (index !== -1) {
-                    this.mantenimientos[index] = {
-                        ...this.selectedMantenimiento,
-                        mantPrev: this.mantenimientoForm.mantPrev,
-                        cod_cliente: this.mantenimientoForm.cod_cliente,
-                        fecha: this.mantenimientoForm.fecha_mantenimiento.toISOString().split('T')[0],
-                        equipos: this.mantenimientoForm.equipos,
-                        ingreso: this.mantenimientoForm.ingreso,
-                        egreso: this.mantenimientoForm.egreso,
-                        frecuencia: this.mantenimientoForm.frecuencia,
-                        prox_mantenimiento: this.mantenimientoForm.prox_fecha.toISOString().split('T')[0]
-                    };
-                }
-                this.messageService.add({
-                    severity: 'success',
-                    summary: 'Exitoso',
-                    detail: 'Mantenimiento actualizado',
-                    life: 3000
+                this.mantenimientoService.updateMantenimiento(this.selectedMantenimiento.id_operacion!, formData).subscribe({
+                    next: () => {
+                        this.messageService.add({
+                            severity: 'success',
+                            summary: 'Exitoso',
+                            detail: 'Mantenimiento actualizado',
+                            life: 3000
+                        });
+                        this.hideDialog();
+                        this.loadMantenimientos(); // Recargar la lista
+                    },
+                    error: (error) => {
+                        console.error('Error al actualizar:', error);
+                        this.messageService.add({
+                            severity: 'error',
+                            summary: 'Error',
+                            detail: 'No se pudo actualizar el mantenimiento',
+                            life: 3000
+                        });
+                    }
                 });
             } else {
                 // Crear nuevo mantenimiento
-                const newMantenimiento: Mantenimiento = {
-                    id_operacion: this.mantenimientos.length + 1,
-                    mantPrev: this.mantenimientoForm.mantPrev,
-                    cod_cliente: this.mantenimientoForm.cod_cliente,
-                    nombre_cliente: 'Cliente Ejemplo', // En producción vendría del backend
-                    fecha: this.mantenimientoForm.fecha_mantenimiento.toISOString().split('T')[0],
-                    equipos: this.mantenimientoForm.equipos,
-                    ingreso: this.mantenimientoForm.ingreso,
-                    egreso: this.mantenimientoForm.egreso,
-                    frecuencia: this.mantenimientoForm.frecuencia,
-                    prox_mantenimiento: this.mantenimientoForm.prox_fecha.toISOString().split('T')[0],
-                    id_cliente: 1, // En producción vendría del formulario
-                    tipo_operacion: 'MANTENIMIENTO'
-                };
-                this.mantenimientos.push(newMantenimiento);
-                this.messageService.add({
-                    severity: 'success',
-                    summary: 'Exitoso',
-                    detail: 'Mantenimiento creado',
-                    life: 3000
+                this.mantenimientoService.createMantenimiento(formData).subscribe({
+                    next: (response) => {
+                        this.messageService.add({
+                            severity: 'success',
+                            summary: 'Exitoso',
+                            detail: 'Mantenimiento creado',
+                            life: 3000
+                        });
+                        this.hideDialog();
+                        this.loadMantenimientos(); // Recargar la lista
+                    },
+                    error: (error) => {
+                        console.error('Error al crear:', error);
+                        this.messageService.add({
+                            severity: 'error',
+                            summary: 'Error',
+                            detail: 'No se pudo crear el mantenimiento',
+                            life: 3000
+                        });
+                    }
                 });
             }
-            this.hideDialog();
         }
     }
 
     validateForm(): boolean {
-        if (!this.mantenimientoForm.mantPrev || !this.mantenimientoForm.cod_cliente || 
-            !this.mantenimientoForm.equipos || !this.mantenimientoForm.frecuencia) {
+        if (!this.mantenimientoForm.cod_cliente || !this.mantenimientoForm.equipos || 
+            !this.mantenimientoForm.frecuencia) {
             this.messageService.add({
                 severity: 'error',
                 summary: 'Error',
@@ -248,8 +261,8 @@ export class GestionDatosMantenimientoComponent implements OnInit {
 
     resetForm(): MantenimientoForm {
         return {
-            mantPrev: '',
-            cod_cliente: '',
+            mantPrev: '', // Se generará automáticamente en el backend
+            cod_cliente: 0,
             fecha_mantenimiento: new Date(),
             equipos: '',
             ingreso: 0,
@@ -265,16 +278,33 @@ export class GestionDatosMantenimientoComponent implements OnInit {
             return;
         }
         
-        this.mantenimientos = this.mantenimientos.filter(m => 
-            m.mantPrev?.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-            m.cod_cliente?.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-            m.nombre_cliente?.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-            m.equipos?.toLowerCase().includes(this.searchTerm.toLowerCase())
-        );
+        this.loading = true;
+        this.mantenimientoService.searchMantenimientos(this.searchTerm).subscribe({
+            next: (mantenimientos) => {
+                this.mantenimientos = mantenimientos;
+                this.loading = false;
+            },
+            error: (error) => {
+                console.error('Error en búsqueda:', error);
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Error',
+                    detail: 'Error al buscar mantenimientos',
+                    life: 3000
+                });
+                this.loading = false;
+            }
+        });
     }
 
     clearSearch() {
         this.searchTerm = '';
         this.loadMantenimientos();
     }
-}
+
+    // Método helper para obtener el nombre del cliente por ID
+    getClienteNameById(clienteId: number): string {
+        const cliente = this.clientes.find(c => c.id_cliente === clienteId);
+        return cliente ? `${cliente.nombre} ${cliente.apellido}` : '';
+    }
+}   
