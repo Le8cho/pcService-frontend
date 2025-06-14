@@ -1,29 +1,36 @@
-// src/app/login/login.component.ts
+// src/app/login/login.component.ts (Versión Final Integrada)
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../ServiciosSIST/auth.service';
 
-// Importa el servicio de autenticación desde la ubicación correcta
-import { AuthService } from '../ServiciosSIST/auth.service'; 
-
-// --- IMPORTACIONES DE PRIMENG ---
+// --- IMPORTACIONES DE PRIMENG (ADAPTADAS A LA PLANTILLA) ---
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { MessageModule } from 'primeng/message';
-
+import { RippleModule } from 'primeng/ripple';
+import { PasswordModule } from 'primeng/password';
+import { CheckboxModule } from 'primeng/checkbox'; // Opcional, para el "Remember me"
 
 @Component({
   selector: 'app-login',
-  standalone: true, // Asegúrate de que el componente sea Standalone
+  standalone: true,
   imports: [
-    CommonModule, // Necesario para directivas como *ngIf
-    ReactiveFormsModule, // Necesario para [formGroup] y formControlName
-    InputTextModule, // Para la directiva pInputText
-    ButtonModule, // Para el componente pButton y la propiedad [loading]
-    MessageModule // Para el componente <p-message>
+    // Módulos de Angular
+    CommonModule,
+    ReactiveFormsModule,
+
+    // Módulos de PrimeNG
+    InputTextModule,
+    ButtonModule,
+    MessageModule,
+    RippleModule,
+    PasswordModule,
+    CheckboxModule // Opcional
   ],
   templateUrl: './login.component.html',
+  styleUrls: ['./login.component.scss']
 })
 export class LoginComponent {
   loginForm: FormGroup;
@@ -32,7 +39,7 @@ export class LoginComponent {
 
   constructor(
     private fb: FormBuilder,
-    private authService: AuthService, // Inyecta el servicio
+    private authService: AuthService,
     private router: Router
   ) {
     this.loginForm = this.fb.group({
@@ -53,8 +60,7 @@ export class LoginComponent {
     this.authService.login(credentials).subscribe({
       next: (response) => {
         this.loading = false;
-        // Redirigir al dashboard o página principal tras un login exitoso
-        this.router.navigate(['']); // Cambiar '' por ruta principal
+        this.router.navigate(['/dashboard']); // Cambia '/dashboard' por tu ruta principal
       },
       error: (err) => {
         this.loading = false;
