@@ -1,1 +1,198 @@
-<p>gestion-datos-servicios works!</p>
+<div class="grid">
+    <div class="col-12">
+        <div class="card px-6 py-6">
+            <p-toast></p-toast>
+            <p-toolbar styleClass="mb-4">
+                <ng-template pTemplate="left">
+                    <h2 class="m-0">Gestión de Servicios</h2>
+                </ng-template>
+                <ng-template pTemplate="right">
+                    <button 
+                        pButton 
+                        pRipple 
+                        label="NUEVO" 
+                        icon="pi pi-plus" 
+                        class="p-button-success mr-2" 
+                        (click)="openNew()">
+                    </button>
+                </ng-template>
+            </p-toolbar>
+
+            <div class="mb-4">
+                <div class="p-inputgroup">
+                    <input 
+                        type="text" 
+                        pInputText 
+                        placeholder="Buscar por #Servicio, cliente o detalle..." 
+                        [(ngModel)]="searchTerm"
+                        (keyup.enter)="searchServicios()"
+                        style="width: 350px;">
+                    <button 
+                        pButton 
+                        pRipple 
+                        type="button" 
+                        icon="pi pi-search" 
+                        class="p-button-primary"
+                        label="BUSCAR"
+                        (click)="searchServicios()">
+                    </button>
+                    <button 
+                        pButton 
+                        pRipple 
+                        type="button" 
+                        icon="pi pi-times" 
+                        class="p-button-secondary"
+                        (click)="clearSearch()"
+                        *ngIf="searchTerm">
+                    </button>
+                </div>
+            </div>
+
+            <p-table 
+                #dt 
+                [value]="servicios" 
+                [rows]="10" 
+                [paginator]="true"
+                [globalFilterFields]="['id_servicio','cliente','detalle','tecnico_encargado']"
+                [loading]="loading" responsiveLayout="scroll">
+                
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th pSortableColumn="id_servicio">
+                            #Servicio 
+                            <p-sortIcon field="id_servicio"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="cliente">
+                            Cliente 
+                            <p-sortIcon field="cliente"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="fecha">
+                            Fecha 
+                            <p-sortIcon field="fecha"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="detalle">
+                            Detalle 
+                            <p-sortIcon field="detalle"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="tecnico_encargado">Técnico</th> <th pSortableColumn="duracion_estimada">Duración</th> <th pSortableColumn="ingreso">Ingreso (S/)</th>
+                        <th pSortableColumn="egreso">Egreso (S/)</th>
+                        <th>Acciones</th>
+                    </tr>
+                </ng-template>
+                
+                <ng-template pTemplate="body" let-servicio>
+                    <tr>
+                        <td>
+                            <span class="p-column-title"></span>
+                            {{servicio.id_servicio}}
+                        </td>
+                        <td>
+                            <span class="p-column-title"></span>
+                            {{servicio.cliente}}
+                        </td>
+                        <td>
+                            <span class="p-column-title"></span>
+                            {{servicio.fecha}}
+                        </td>
+                        <td>
+                            <span class="p-column-title"></span>
+                            {{servicio.detalle}}
+                        </td>
+                        <td>{{servicio.tecnico_encargado}}</td> <td>{{servicio.duracion_estimada}}</td> <td>{{servicio.ingreso | currency:'S/ '}}</td>
+                        <td>{{servicio.egreso | currency:'S/ '}}</td>
+                        <td>
+                            <div class="flex">
+                                <button 
+                                    pButton 
+                                    pRipple 
+                                    icon="pi pi-pencil" 
+                                    class="p-button-rounded p-button-success mr-2" 
+                                    (click)="editServicio(servicio)"
+                                    pTooltip="Editar">
+                                </button>
+                                <button 
+                                    pButton 
+                                    pRipple 
+                                    icon="pi pi-trash" 
+                                    class="p-button-rounded p-button-warning" 
+                                    (click)="deleteServicio(servicio)"
+                                    pTooltip="Eliminar">
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+
+            <p-dialog [(visible)]="servicioDialog" [header]="editMode ? 'Editar Servicio' : 'Nuevo Servicio'"
+                [modal]="true" class="p-fluid" [style]="{width: '500px'}" [closable]="true">
+                
+                <ng-template pTemplate="content">
+                    <div class="field">
+                        <label for="cliente">Cliente *</label>
+                        <p-dropdown 
+                            id="cliente"
+                            [(ngModel)]="servicioForm.id_cliente"
+                            [options]="clienteOptions"
+                            placeholder="Seleccionar un cliente"
+                            [filter]="true" filterBy="label"
+                            [ngClass]="{'ng-invalid ng-dirty' : !servicioForm.id_cliente}">
+                        </p-dropdown>
+                        <small class="ng-dirty ng-invalid" *ngIf="!servicioForm.id_cliente">
+                            El cliente es requerido.
+                        </small>
+                    </div>
+                    
+                    <div class="field">
+                        <label for="detalle">Detalle del Servicio *</label>
+                        <textarea pInputTextarea id="detalle" [(ngModel)]="servicioForm.detalle" required
+                            rows="3" [ngClass]="{'ng-invalid ng-dirty' : !servicioForm.detalle}"></textarea>
+                        <small class="ng-dirty ng-invalid" *ngIf="!servicioForm.detalle">
+                            El detalle es requerido.
+                        </small>
+                    </div>
+
+                    <div class="formgrid grid">
+                        <div class="field col">
+                            <label for="tecnico">Técnico Encargado</label>
+                            <input type="text" pInputText id="tecnico" [(ngModel)]="servicioForm.tecnico_encargado">
+                        </div>
+                        <div class="field col">
+                            <label for="duracion">Duración Estimada</label>
+                            <input type="text" pInputText id="duracion" [(ngModel)]="servicioForm.duracion_estimada">
+                        </div>
+                    </div>
+
+                    <div class="formgrid grid">
+                        <div class="field col">
+                            <label for="fecha">Fecha *</label>
+                            <p-calendar id="fecha" [(ngModel)]="servicioForm.fecha"
+                                dateFormat="dd/mm/yy" [showIcon]="true">
+                            </p-calendar>
+                        </div>
+                    </div>
+
+                    <div class="formgrid grid">
+                        <div class="field col">
+                            <label for="ingreso">Ingreso (S/.)</label>
+                            <input type="number" pInputText id="ingreso" [(ngModel)]="servicioForm.ingreso"
+                                step="0.01" min="0" placeholder="0.00">
+                        </div>
+                        <div class="field col">
+                            <label for="egreso">Egreso (S/.)</label>
+                            <input type="number" pInputText id="egreso" [(ngModel)]="servicioForm.egreso"
+                                step="0.01" min="0" placeholder="0.00">
+                        </div>
+                    </div>
+                </ng-template>
+
+                <ng-template pTemplate="footer">
+                    <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+                    <button pButton pRipple [label]="editMode ? 'Guardar Cambios' : 'Guardar'" icon="pi pi-check" class="p-button-text" (click)="saveServicio()"></button>
+                </ng-template>
+            </p-dialog>
+
+            <p-confirmDialog [style]="{width: '425px'}"></p-confirmDialog>
+        </div>
+    </div>
+</div>

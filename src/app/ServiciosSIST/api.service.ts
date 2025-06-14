@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Mantenimiento, MantenimientoForm, Cliente, Dispositivo } from '../models/mantenimiento.interface';
+import { Servicio, ServicioForm, Cliente } from '../models/servicio.interface';
 @Injectable({
   providedIn: 'root'
 })
@@ -37,101 +37,78 @@ Servicios de Gestión de Datos Clientes
 /*
 Servicios de Gestión de Datos Servicios
 */
-
-/*
-Servicios de Gestión de Datos Mantenimiento
-*/
 @Injectable({
   providedIn: 'root'
 })
-export class MantenimientoService {
+export class ServicioService {
   constructor(private apiService: ApiService) { }
 
-  // CRUD Mantenimientos
-  getMantenimientos(): Observable<Mantenimiento[]> {
-    return this.apiService.get<Mantenimiento[]>('/mantenimientos');
+  // CRUD Servicios
+  getServicios(): Observable<Servicio[]> {
+    return this.apiService.get<Servicio[]>('/servicios');
   }
 
-  getMantenimientoById(id: number): Observable<Mantenimiento> {
-    return this.apiService.get<Mantenimiento>(`/mantenimientos/${id}`);
-  }
-
-  createMantenimiento(mantenimiento: any): Observable<any> {
+  createServicio(servicio: any): Observable<any> {
     const payload = {
-      id_cliente: mantenimiento.id_cliente,
-      descripcion: mantenimiento.equipos || mantenimiento.descripcion,
-      frecuencia: mantenimiento.frecuencia,
-      prox_mantenimiento: mantenimiento.prox_fecha ? 
-        this.formatDateForBackend(mantenimiento.prox_fecha) : null,
-      tipo_mantenimiento: mantenimiento.tipo_mantenimiento || 'PREVENTIVO',
-      ingreso: mantenimiento.ingreso || null,
-      egreso: mantenimiento.egreso || null,
-      fecha: mantenimiento.fecha_mantenimiento ? 
-        this.formatDateForBackend(mantenimiento.fecha_mantenimiento) : null
+      id_cliente: servicio.id_cliente,
+      detalle: servicio.detalle || servicio.descripcion,
+      tecnico_encargado: servicio.tecnico_encargado || servicio.tecnico,
+      duracion_estimada: servicio.duracion_estimada || servicio.duracion,
+      ingreso: servicio.ingreso || null,
+      egreso: servicio.egreso || null,
+      fecha: servicio.fecha ? 
+        this.formatDateForBackend(servicio.fecha) : null
     };
-    return this.apiService.post<any>('/mantenimientos', payload);
+    return this.apiService.post<any>('/servicios', payload);
   }
 
-  updateMantenimiento(id: number, mantenimiento: any): Observable<any> {
+  updateServicio(id: number, servicio: any): Observable<any> {
     const payload = {
-      descripcion: mantenimiento.equipos || mantenimiento.descripcion,
-      frecuencia: mantenimiento.frecuencia,
-      prox_mantenimiento: mantenimiento.prox_fecha ? 
-        this.formatDateForBackend(mantenimiento.prox_fecha) : null,
-      tipo_mantenimiento: mantenimiento.tipo_mantenimiento || 'PREVENTIVO',
-      ingreso: mantenimiento.ingreso || null,
-      egreso: mantenimiento.egreso || null,
-      fecha: mantenimiento.fecha_mantenimiento ? 
-        this.formatDateForBackend(mantenimiento.fecha_mantenimiento) : null
+      detalle: servicio.detalle || servicio.descripcion,
+      tecnico_encargado: servicio.tecnico_encargado || servicio.tecnico,
+      duracion_estimada: servicio.duracion_estimada || servicio.duracion,
+      ingreso: servicio.ingreso || null,
+      egreso: servicio.egreso || null,
+      fecha: servicio.fecha ? 
+        this.formatDateForBackend(servicio.fecha) : null
     };
-    return this.apiService.put<any>(`/mantenimientos/${id}`, payload);
+    return this.apiService.put<any>(`/servicios/${id}`, payload);
   }
 
-  deleteMantenimiento(id: number): Observable<any> {
-    return this.apiService.delete<any>(`/mantenimientos/${id}`);
+  deleteServicio(id: number): Observable<any> {
+    return this.apiService.delete<any>(`/servicios/${id}`);
   }
 
-  // Búsquedas y filtros
-  searchMantenimientos(term: string): Observable<Mantenimiento[]> {
+  // Búsqueda
+  searchServicios(term: string): Observable<Servicio[]> {
     const params = new HttpParams().set('search', term);
-    return this.apiService.get<Mantenimiento[]>('/mantenimientos/search', params);
+    return this.apiService.get<Servicio[]>('/servicios/search', params);
   }
-
-  getMantenimientosProximosVencer(dias: number = 7): Observable<Mantenimiento[]> {
-    const params = new HttpParams().set('dias', dias.toString());
-    return this.apiService.get<Mantenimiento[]>('/mantenimientos/proximos-vencer', params);
-  }
-
-  // Métodos auxiliares para obtener datos relacionados
+  
+  // Datos relacionados
   getClientes(): Observable<Cliente[]> {
     return this.apiService.get<Cliente[]>('/clientes');
   }
 
-  getDispositivosByCliente(clienteId: number): Observable<Dispositivo[]> {
-    return this.apiService.get<Dispositivo[]>(`/dispositivos/cliente/${clienteId}`);
-  }
-
-  // Método helper para formatear fechas
+  // Helper para formatear fechas
   private formatDateForBackend(date: Date | string): string {
     if (date instanceof Date) {
-      return date.toISOString().split('T')[0]; // YYYY-MM-DD
+      return date.toISOString(); // Envía en formato ISO 8601
     }
     return date;
   }
-
-  // Método helper para convertir cliente ID desde código (CL001 -> 1)
-  extractClienteId(codCliente: string): number {
-    if (codCliente && codCliente.startsWith('CL')) {
-      return parseInt(codCliente.substring(2));
-    }
-    return parseInt(codCliente) || 0;
-  }
-
-  // Método helper para generar código de cliente (1 -> CL001)
+  
+  // Helper para generar código de cliente
   generateClienteCode(id: number): string {
-    return `CL${id.toString().padStart(3, '0')}`;
+    return `C${id.toString().padStart(4, '0')}`;
   }
 }
+
+/*
+Servicios de Gestión de Datos Mantenimiento
+*/
+
+
 /*
 Servicios de Gestión de Datos Licencias
 
