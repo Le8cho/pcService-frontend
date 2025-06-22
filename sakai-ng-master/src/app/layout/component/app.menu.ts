@@ -89,6 +89,16 @@ export class AppMenu {
                         label: 'Empty',
                         icon: 'pi pi-fw pi-circle-off',
                         routerLink: ['/pages/empty']
+                    },
+                    {
+                        label: 'Dispositivos',
+                        icon: 'pi pi-fw pi-desktop',
+                        routerLink: ['/gestion-datos-dispositivos']
+                    },
+                    {
+                        label: 'Ventas de Licencias',
+                        icon: 'pi pi-fw pi-file',
+                        routerLink: ['/gestion-datos-licencias']
                     }
                 ]
             },
@@ -151,7 +161,8 @@ export class AppMenu {
                         target: '_blank'
                     }
                 ]
-            }
+            },
+
         ];
     }
 }

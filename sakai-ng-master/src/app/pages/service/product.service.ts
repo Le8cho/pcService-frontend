@@ -1285,7 +1285,8 @@ export class ProductService {
             rating: this.generateRating()
         };
 
-        product.image = product.name?.toLocaleLowerCase().split(/[ ,]+/).join('-') + '.jpg';
+        const name = product.name ? product.name.toLocaleLowerCase() : '';
+        product.image = name.split(/[ ,]+/).join('-') + '.jpg';
         return product;
     }
 
