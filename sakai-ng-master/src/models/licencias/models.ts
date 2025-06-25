@@ -65,6 +65,7 @@ export interface Antivirus {
   tiempoLicencia: string;
   nombreAntivirus: string;
   userAntivirus: string;
+  idCliente?: number; // <-- Nuevo campo opcional
 }
 
 // Interfaces para las vistas del componente

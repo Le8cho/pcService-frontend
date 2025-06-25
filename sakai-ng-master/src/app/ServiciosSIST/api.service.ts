@@ -142,4 +142,8 @@ deleteDispositivo(id: number): Observable<any> {
 Servicios de Gestión de Datos Login
 */
 
+  // Obtener todos los clientes
+  getClientes(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/clientes`);
+  }
 }

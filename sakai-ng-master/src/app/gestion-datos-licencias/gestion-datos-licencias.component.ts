@@ -17,7 +17,8 @@ import {
   TipoLicencia,
   Microsoft365,
   Windows,
-  Antivirus
+  Antivirus,
+  Cliente
 } from '../../models/licencias/models';
 
 @Component({
@@ -84,11 +85,10 @@ export class GestionDatosLicenciasComponent implements OnInit {
     { label: 'Rango de valores', value: 'rango' }
   ];
 
-  mostrarDispositivos: boolean = false;
-  dispositivos: any[] = [];
-  mostrarDialogoDispositivo: boolean = false;
-  editandoDispositivo: boolean = false;
-  dispositivoSeleccionado: any = {};
+  clientes: Cliente[] = [];
+  clienteSeleccionado: Cliente | null = null;
+  dispositivosCliente: any[] = [];
+  dispositivoSeleccionado: any = null;
 
   constructor(
     private licenciasService: ApiService,
@@ -98,7 +98,7 @@ export class GestionDatosLicenciasComponent implements OnInit {
 
   ngOnInit(): void {
   console.log('⚡ Componente GestionDatosLicenciasComponent inicializado');
-  this.cargarDispositivos();
+  this.cargarClientes();
 }
 
   seleccionarTipoLicencia(tipo: string): void {
@@ -341,6 +341,30 @@ export class GestionDatosLicenciasComponent implements OnInit {
 registroLicenciaDialog: boolean = false;
 nuevaLicencia: any = {}; // Puedes tipar mejor según el tipo de licencia
 
+cargarClientes(): void {
+  this.apiService.getClientes().subscribe(data => {
+    // Normaliza los nombres de las propiedades y crea un campo para mostrar en el dropdown
+    this.clientes = data.map((c: any) => ({
+      ...c,
+      displayName: (c.NOMBRE || c.nombre || '') + ' ' + (c.APELLIDO || c.apellido || '')
+    }));
+  });
+}
+
+onClienteChange(cliente: any) {
+  this.clienteSeleccionado = cliente;
+  this.dispositivoSeleccionado = null;
+  this.dispositivosCliente = [];
+  const idCliente = cliente?.idCliente ?? cliente?.ID_CLIENTE;
+  if (idCliente) {
+    this.apiService.getDispositivos().subscribe(dispositivos => {
+      this.dispositivosCliente = dispositivos.filter(d =>
+        d.ID_CLIENTE == idCliente || d.idCliente == idCliente
+      );
+    });
+  }
+}
+
 MostrarRegistro(): void {
   // Inicializa la nueva licencia con la fecha actual y tiempo por defecto
   const hoy = new Date();
@@ -350,10 +374,14 @@ MostrarRegistro(): void {
   const fechaActual = `${yyyy}-${mm}-${dd}`;
   this.nuevaLicencia = {
     fechaInicio: fechaActual,
-    tiempoLicencia: '1a', // Por defecto 1 año
+    tiempoLicencia: '1a',
     fechaFin: '',
-    fechaAviso: ''
+    fechaAviso: '',
+    idCliente: null,
+    ingreso: null, // Nuevo campo
+    egreso: null   // Nuevo campo
   };
+  this.clienteSeleccionado = null;
   this.recalcularFechaFin();
   this.registroLicenciaDialog = true;
 }
@@ -384,6 +412,10 @@ recalcularFechaFin(): void {
 }
 
 guardarLicencia(): void {
+  this.nuevaLicencia.idCliente = this.clienteSeleccionado?.idCliente ?? null;
+  this.nuevaLicencia.idDispositivo = this.dispositivoSeleccionado?.ID_DISPOSITIVO ?? null;
+  console.log('DEBUG: Datos a enviar en nuevaLicencia:', this.nuevaLicencia);
+  // Los campos ingreso y egreso ya están en this.nuevaLicencia
   this.licenciasService.registrarAntivirus(this.nuevaLicencia).subscribe({
     next: (resp) => {
       this.messageService.add({severity: 'success', summary: 'Éxito', detail: 'Licencia Antivirus registrada'});
@@ -396,46 +428,4 @@ guardarLicencia(): void {
   });
 }
 
-cargarDispositivos(): void {
-  this.apiService.getDispositivos().subscribe(data => {
-    this.dispositivos = data;
-  });
-}
-
-abrirDialogoDispositivo(): void {
-  this.editandoDispositivo = false;
-  this.dispositivoSeleccionado = {};
-  this.mostrarDialogoDispositivo = true;
-}
-
-editarDispositivo(dispositivo: any): void {
-  this.editandoDispositivo = true;
-  this.dispositivoSeleccionado = { ...dispositivo };
-  this.mostrarDialogoDispositivo = true;
-}
-
-guardarDispositivo(): void {
-  if (this.editandoDispositivo) {
-    this.apiService.updateDispositivo(this.dispositivoSeleccionado).subscribe(() => {
-      this.cargarDispositivos();
-      this.mostrarDialogoDispositivo = false;
-    });
-  } else {
-    this.apiService.createDispositivo(this.dispositivoSeleccionado).subscribe(() => {
-      this.cargarDispositivos();
-      this.mostrarDialogoDispositivo = false;
-    });
-  }
-}
-
-eliminarDispositivo(id: number): void {
-  this.apiService.deleteDispositivo(id).subscribe(() => {
-    this.cargarDispositivos();
-  });
-}
-
-cerrarDialogoDispositivo(): void {
-  this.mostrarDialogoDispositivo = false;
-}
-// ...
 }

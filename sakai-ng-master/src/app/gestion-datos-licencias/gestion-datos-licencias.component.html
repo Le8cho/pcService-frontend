@@ -384,7 +384,55 @@
   [style]="{width: '450px'}">
 
   <form #formLicencia="ngForm" (ngSubmit)="guardarLicencia()">
-    <!-- Eliminado el campo ID Licencia -->
+    <!-- Selección de cliente y dispositivo para todos los tipos -->
+    <ng-container *ngIf="tipoLicenciaSeleccionado === 'antivirus' || tipoLicenciaSeleccionado === 'ofimatica' || tipoLicenciaSeleccionado === 'sistema_operativo'">
+      <div class="field mb-3">
+        <label for="clienteLicencia">Cliente</label>
+        <p-dropdown 
+          id="clienteLicencia"
+          [options]="clientes"
+          [(ngModel)]="clienteSeleccionado"
+          name="clienteSeleccionado"
+          optionLabel="displayName"
+          [filter]="true"
+          filterPlaceholder="Buscar cliente"
+          [virtualScroll]="true"
+          [itemSize]="40"
+          placeholder="Seleccione un cliente"
+          class="w-full"
+          (onChange)="onClienteChange($event.value)">
+        </p-dropdown>
+      </div>
+      <div class="field mb-3">
+        <label for="dispositivoAsociado">Dispositivo asociado</label>
+        <p-dropdown
+          id="dispositivoAsociado"
+          [options]="dispositivosCliente"
+          [(ngModel)]="dispositivoSeleccionado"
+          name="dispositivoSeleccionado"
+          optionLabel="MODELO"
+          [filter]="true"
+          [disabled]="!clienteSeleccionado"
+          filterPlaceholder="Buscar dispositivo"
+          placeholder="Seleccione un dispositivo"
+          class="w-full">
+        </p-dropdown>
+      </div>
+
+      <!-- Nueva fila para Ingreso y Egreso en dos columnas -->
+      <div class="field mb-3">
+        <div class="formgrid grid">
+          <div class="field col-6">
+            <label for="ingreso">Ingreso</label>
+            <input id="ingreso" type="number" pInputText [(ngModel)]="nuevaLicencia.ingreso" name="ingreso" class="w-full"/>
+          </div>
+          <div class="field col-6">
+            <label for="egreso">Egreso</label>
+            <input id="egreso" type="number" pInputText [(ngModel)]="nuevaLicencia.egreso" name="egreso" class="w-full"/>
+          </div>
+        </div>
+      </div>
+    </ng-container>
     <div class="field mb-3">
       <label for="detalles">Detalles</label>
       <input id="detalles" type="text" pInputText [(ngModel)]="nuevaLicencia.detalles" name="detalles" class="w-full"/>
@@ -457,6 +505,7 @@
         <input id="keyTipo" type="text" pInputText [(ngModel)]="nuevaLicencia.keyTipo" name="keyTipo" class="w-full"/>
       </div>
     </ng-container>
+
     <div class="flex justify-content-end gap-2 mt-4">
       <button pButton label="Cancelar" class="p-button-secondary" type="button" (click)="registroLicenciaDialog=false"></button>
       <button pButton label="Registrar" type="submit" [disabled]="formLicencia.invalid"></button>
