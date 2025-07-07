@@ -5,6 +5,8 @@ import { Documentation } from './app/pages/documentation/documentation';
 import { Landing } from './app/pages/landing/landing';
 import { Notfound } from './app/pages/notfound/notfound';
 import { GestionDatosClientesComponent } from './app/gestion-datos-clientes/gestion-datos-clientes.component';
+import { GestionDatosMantenimientoComponent } from './app/gestion-datos-mantenimiento/gestion-datos-mantenimiento.component';
+
 
 export const appRoutes: Routes = [
     {
@@ -15,7 +17,8 @@ export const appRoutes: Routes = [
             { path: 'clientes', component: GestionDatosClientesComponent },
             { path: 'uikit', loadChildren: () => import('./app/pages/uikit/uikit.routes') },
             { path: 'documentation', component: Documentation },
-            { path: 'pages', loadChildren: () => import('./app/pages/pages.routes') }
+            { path: 'pages', loadChildren: () => import('./app/pages/pages.routes') },
+            { path: 'gestion-mantenimientos', component: GestionDatosMantenimientoComponent },
         ]
     },
     { path: 'landing', component: Landing },
