@@ -4,8 +4,12 @@ import { Dashboard } from './app/pages/dashboard/dashboard';
 import { Documentation } from './app/pages/documentation/documentation';
 import { Landing } from './app/pages/landing/landing';
 import { Notfound } from './app/pages/notfound/notfound';
+
+import { GestionDatosServiciosComponent } from './app/gestion-datos-servicios/gestion-datos-servicios.component';
+
 import { GestionDatosClientesComponent } from './app/gestion-datos-clientes/gestion-datos-clientes.component';
 import { GestionDatosMantenimientoComponent } from './app/gestion-datos-mantenimiento/gestion-datos-mantenimiento.component';
+
 
 
 export const appRoutes: Routes = [
@@ -18,6 +22,9 @@ export const appRoutes: Routes = [
             { path: 'uikit', loadChildren: () => import('./app/pages/uikit/uikit.routes') },
             { path: 'documentation', component: Documentation },
             { path: 'pages', loadChildren: () => import('./app/pages/pages.routes') },
+
+            { path: 'gestion-servicios', component: GestionDatosServiciosComponent },
+
             { path: 'gestion-mantenimientos', component: GestionDatosMantenimientoComponent },
         ]
     },

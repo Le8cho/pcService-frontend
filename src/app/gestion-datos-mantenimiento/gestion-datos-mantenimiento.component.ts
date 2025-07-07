@@ -1,3 +1,4 @@
+
 // gestion-datos-mantenimiento.component.ts
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -308,3 +309,4 @@ export class GestionDatosMantenimientoComponent implements OnInit {
         return cliente ? `${cliente.nombre} ${cliente.apellido}` : '';
     }
 }   
+
