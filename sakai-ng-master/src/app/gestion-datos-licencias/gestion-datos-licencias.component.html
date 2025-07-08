@@ -3,7 +3,6 @@
         <div class="card px-6 py-6">
             <h3>Gestión de Datos de Licencias de Software</h3>
             
-
             <!-- SELECCIÓN PRINCIPAL-->
             <div class="flex justify-content-center gap-3 mb-4">
                 <button 
@@ -35,14 +34,11 @@
                     [class.p-button-outlined]="tipoLicenciaSeleccionado !== 'sistema_operativo'"
                     (click)="seleccionarTipoLicencia('sistema_operativo')">
                 </button>
-                
             </div>
             <div style="height: 1.5rem;"></div>
 
-
-
-            <!-- REGISTRAR LICENCIA -->
-            <div class="mb-4">
+            <!-- BOTONES DE ACCIÓN -->
+            <div class="flex flex-wrap gap-2 mb-4">
                 <button 
                     pButton 
                     pRipple 
@@ -51,6 +47,17 @@
                     icon="pi pi-plus"
                     class="p-button-success"
                     (click)="MostrarRegistro()">
+                </button>
+                
+                <button 
+                    pButton 
+                    pRipple 
+                    type="button" 
+                    label="Verificar Vencimientos" 
+                    icon="pi pi-bell"
+                    class="p-button-warning"
+                    (click)="verificarVencimientos()"
+                    [disabled]="!tipoLicenciaSeleccionado">
                 </button>
             </div>
 
@@ -138,9 +145,17 @@
                                 pButton 
                                 pRipple 
                                 icon="pi pi-eye" 
-                                class="p-button-rounded p-button-text"
+                                class="p-button-rounded p-button-text mr-1"
                                 pTooltip="Ver detalles"
                                 (click)="verDetalles(licencia)">
+                            </button>
+                            <button 
+                                pButton 
+                                pRipple 
+                                icon="pi pi-bell" 
+                                class="p-button-rounded p-button-warning p-button-text"
+                                pTooltip="Enviar alerta"
+                                (click)="enviarAlerta(licencia)">
                             </button>
                         </td>
                     </tr>
@@ -155,6 +170,8 @@
         </div>
     </div>
 </div>
+
+<!-- (Mantén todos tus diálogos existentes de filtros y registro aquí sin cambios) -->
 
 <!-- Dialog para filtro por fecha -->
 <p-dialog 
@@ -388,7 +405,7 @@
     <ng-container *ngIf="tipoLicenciaSeleccionado === 'antivirus' || tipoLicenciaSeleccionado === 'ofimatica' || tipoLicenciaSeleccionado === 'sistema_operativo'">
       <div class="field mb-3">
         <label for="clienteLicencia">Cliente</label>
-        <p-dropdown 
+      <p-dropdown 
           id="clienteLicencia"
           [options]="clientes"
           [(ngModel)]="clienteSeleccionado"
@@ -402,6 +419,8 @@
           class="w-full"
           (onChange)="onClienteChange($event.value)">
         </p-dropdown>
+
+
       </div>
       <div class="field mb-3">
         <label for="dispositivoAsociado">Dispositivo asociado</label>

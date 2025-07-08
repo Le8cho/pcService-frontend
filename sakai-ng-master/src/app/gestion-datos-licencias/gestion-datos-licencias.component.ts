@@ -341,15 +341,17 @@ export class GestionDatosLicenciasComponent implements OnInit {
 registroLicenciaDialog: boolean = false;
 nuevaLicencia: any = {}; // Puedes tipar mejor según el tipo de licencia
 
-cargarClientes(): void {
-  this.apiService.getClientes().subscribe(data => {
-    // Normaliza los nombres de las propiedades y crea un campo para mostrar en el dropdown
-    this.clientes = data.map((c: any) => ({
-      ...c,
-      displayName: (c.NOMBRE || c.nombre || '') + ' ' + (c.APELLIDO || c.apellido || '')
-    }));
-  });
-}
+  cargarClientes(): void {
+    this.apiService.getClientes().subscribe(data => {
+      // Normaliza los nombres de las propiedades y crea un campo para mostrar en el dropdown
+      this.clientes = data.map((c: any) => ({
+        ...c,
+        idCliente: c.ID_CLIENTE ?? c.idCliente ?? null,
+        displayName: (c.NOMBRE || c.nombre || '') + ' ' + (c.APELLIDO || c.apellido || '')
+      }));
+    });
+  }
+
 
 onClienteChange(cliente: any) {
   this.clienteSeleccionado = cliente;
@@ -364,6 +366,8 @@ onClienteChange(cliente: any) {
     });
   }
 }
+
+
 
 MostrarRegistro(): void {
   // Inicializa la nueva licencia con la fecha actual y tiempo por defecto
@@ -412,20 +416,95 @@ recalcularFechaFin(): void {
 }
 
 guardarLicencia(): void {
+  // Asignar idCliente y idDispositivo
   this.nuevaLicencia.idCliente = this.clienteSeleccionado?.idCliente ?? null;
   this.nuevaLicencia.idDispositivo = this.dispositivoSeleccionado?.ID_DISPOSITIVO ?? null;
+
   console.log('DEBUG: Datos a enviar en nuevaLicencia:', this.nuevaLicencia);
-  // Los campos ingreso y egreso ya están en this.nuevaLicencia
-  this.licenciasService.registrarAntivirus(this.nuevaLicencia).subscribe({
+
+  // Seleccionar el método de registro según el tipo de licencia
+  let registroObservable;
+
+  switch (this.tipoLicenciaSeleccionado) {
+    case 'antivirus':
+      registroObservable = this.licenciasService.registrarAntivirus(this.nuevaLicencia);
+      break;
+    case 'ofimatica':
+      registroObservable = this.licenciasService.registrarOfimatica(this.nuevaLicencia);
+      break;
+    case 'sistema_operativo':
+      registroObservable = this.licenciasService.registrarSistemaOperativo(this.nuevaLicencia);
+      break;
+    default:
+      console.error('Tipo de licencia no válido');
+      return;
+  }
+
+  // Realizar el registro
+  registroObservable.subscribe({
     next: (resp) => {
-      this.messageService.add({severity: 'success', summary: 'Éxito', detail: 'Licencia Antivirus registrada'});
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Éxito',
+        detail: `Licencia ${this.obtenerNombreTipoLicencia()} registrada`
+      });
       this.registroLicenciaDialog = false;
       this.cargarLicencias();
     },
     error: (err) => {
-      this.messageService.add({severity: 'error', summary: 'Error', detail: 'No se pudo registrar la licencia'});
+      console.error('Error al registrar licencia:', err);
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'No se pudo registrar la licencia'
+      });
+    }
+  });
+}
+// Agrega estos nuevos métodos a tu clase, justo antes del último cierre de llave (})
+verificarVencimientos(): void {
+  this.cargando = true;
+  this.licenciasService.verificarVencimientosLicencias().subscribe({
+    next: (resultado) => {
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Verificación completada',
+        detail: `Se verificaron ${resultado.totalLicencias} licencias próximas a vencer`
+      });
+      this.cargando = false;
+    },
+    error: (error) => {
+      console.error('Error al verificar vencimientos:', error);
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'No se pudieron verificar las licencias'
+      });
+      this.cargando = false;
     }
   });
 }
 
+  enviarAlerta(licencia: LicenciaResumen): void {
+    this.cargando = true;
+    this.licenciasService.enviarAlertaManual(licencia.idLicencia).subscribe({
+      next: (resultado) => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Alerta enviada',
+          detail: `Se envió correo a ${resultado.cliente}`
+        });
+        this.cargando = false;
+      },
+      error: (error) => {
+        console.error('Error al enviar alerta:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'No se pudo enviar la alerta'
+        });
+        this.cargando = false;
+      }
+    });
+  }
 }

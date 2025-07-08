@@ -94,10 +94,19 @@ Servicios de Gestión de Datos Licencias
     return this.http.get<LicenciaResumen[]>(`${this.apiUrl}/licencias/${tipo}/filtrar-disponibilidad`, { params });
   }
 
-  // Registrar nueva licencia
- registrarAntivirus(antivirus: Antivirus): Observable<any> {
-  return this.http.post(`${this.apiUrl}/licencias/registrar-antivirus`, antivirus);
-}
+  // Registrar nuevas licencias
+  registrarAntivirus(antivirus: Antivirus): Observable<any> {
+    return this.http.post(`${this.apiUrl}/licencias/registrar-antivirus`, antivirus);
+  }
+
+  registrarOfimatica(ofimatica: Microsoft365): Observable<any> {
+    return this.http.post(`${this.apiUrl}/licencias/registrar-ofimatica`, ofimatica);
+  }
+
+  registrarSistemaOperativo(windows: Windows): Observable<any> {
+    return this.http.post(`${this.apiUrl}/licencias/registrar-sistema-operativo`, windows);
+  }
+
 
   // Obtener detalles específicos por tipo de licencia
   obtenerDetallesAntivirus(idLicencia: string): Observable<Antivirus> {
@@ -146,4 +155,22 @@ Servicios de Gestión de Datos Login
   getClientes(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/clientes`);
   }
+
+
+
+
+// En api.service.ts, agrega estos métodos a la clase ApiService
+
+// Agrega estos métodos a tu ApiService:
+
+  verificarVencimientosLicencias(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/licencias/verificar-vencimientos`);
+  }
+
+  enviarAlertaManual(idLicencia: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/licencias/enviar-alerta/${idLicencia}`, {});
+  }
 }
+
+
+
