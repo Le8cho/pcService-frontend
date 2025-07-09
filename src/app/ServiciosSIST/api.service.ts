@@ -1,4 +1,15 @@
 import { Injectable } from '@angular/core';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { 
+  LicenciaResumen, 
+  FiltroLicencias, 
+  TipoLicencia,
+  Microsoft365,
+  Windows,
+  Antivirus 
+}  from '../../models/licencias/models';
+
 import { Observable } from 'rxjs';
 import { HttpClient, HttpParams } from '@angular/common/http';
 
@@ -9,6 +20,13 @@ import { Mantenimiento, MantenimientoForm, Cliente, Dispositivo } from '../model
 })
 export class ApiService {
   private baseUrl = 'http://127.0.0.1:5000/api';
+
+  private apiUrl = 'http://localhost:5000/api';
+
+  constructor(private http: HttpClient) { }
+
+  // Métodos para gestionar datos de clientes
+
 
   constructor(private http: HttpClient) { }
 
@@ -208,11 +226,136 @@ Servicios de Gestión de Datos Licencias
 */
 
 
+  // Obtener licencias por tipo
+  obtenerLicenciasPorTipo(tipo: TipoLicencia): Observable<LicenciaResumen[]> {
+    return this.http.get<LicenciaResumen[]>(`${this.apiUrl}/licencias/${tipo}`);
+  }
+
+  // Filtrar licencias por fecha de adquisición
+  filtrarPorFechaAdquisicion(tipo: TipoLicencia, filtro: FiltroLicencias): Observable<LicenciaResumen[]> {
+    let params = new HttpParams();
+    
+    if (filtro.fechaInicio) {
+      params = params.set('fechaInicio', filtro.fechaInicio.toISOString());
+    }
+    if (filtro.fechaFin) {
+      params = params.set('fechaFin', filtro.fechaFin.toISOString());
+    }
+
+    return this.http.get<LicenciaResumen[]>(`${this.apiUrl}/licencias/${tipo}/filtrar-fecha`, { params });
+  }
+
+  // Filtrar licencias por total de dispositivos
+  filtrarPorTotalDispositivos(tipo: TipoLicencia, filtro: FiltroLicencias): Observable<LicenciaResumen[]> {
+    let params = new HttpParams();
+    
+    if (filtro.totalDispositivos !== undefined) {
+      params = params.set('totalDispositivos', filtro.totalDispositivos.toString());
+    }
+    if (filtro.rangoDispositivosMin !== undefined) {
+      params = params.set('rangoMin', filtro.rangoDispositivosMin.toString());
+    }
+    if (filtro.rangoDispositivosMax !== undefined) {
+      params = params.set('rangoMax', filtro.rangoDispositivosMax.toString());
+    }
+
+    return this.http.get<LicenciaResumen[]>(`${this.apiUrl}/licencias/${tipo}/filtrar-dispositivos`, { params });
+  }
+
+  // Filtrar licencias por disponibilidad
+  filtrarPorDisponibilidad(tipo: TipoLicencia, filtro: FiltroLicencias): Observable<LicenciaResumen[]> {
+    let params = new HttpParams();
+    
+    if (filtro.disponibilidad !== undefined) {
+      params = params.set('disponibilidad', filtro.disponibilidad.toString());
+    }
+    if (filtro.rangoDisponibilidadMin !== undefined) {
+      params = params.set('rangoMin', filtro.rangoDisponibilidadMin.toString());
+    }
+    if (filtro.rangoDisponibilidadMax !== undefined) {
+      params = params.set('rangoMax', filtro.rangoDisponibilidadMax.toString());
+    }
+
+    return this.http.get<LicenciaResumen[]>(`${this.apiUrl}/licencias/${tipo}/filtrar-disponibilidad`, { params });
+  }
+
+  // Registrar nuevas licencias
+  registrarAntivirus(antivirus: Antivirus): Observable<any> {
+    return this.http.post(`${this.apiUrl}/licencias/registrar-antivirus`, antivirus);
+  }
+
+  registrarOfimatica(ofimatica: Microsoft365): Observable<any> {
+    return this.http.post(`${this.apiUrl}/licencias/registrar-ofimatica`, ofimatica);
+  }
+
+  registrarSistemaOperativo(windows: Windows): Observable<any> {
+    return this.http.post(`${this.apiUrl}/licencias/registrar-sistema-operativo`, windows);
+  }
+
+
+  // Obtener detalles específicos por tipo de licencia
+  obtenerDetallesAntivirus(idLicencia: string): Observable<Antivirus> {
+    return this.http.get<Antivirus>(`${this.apiUrl}/licencias/antivirus/${idLicencia}`);
+  }
+
+  obtenerDetallesMicrosoft365(idLicencia: string): Observable<Microsoft365> {
+    return this.http.get<Microsoft365>(`${this.apiUrl}/licencias/microsoft365/${idLicencia}`);
+  }
+
+  obtenerDetallesWindows(idLicencia: string): Observable<Windows> {
+    return this.http.get<Windows>(`${this.apiUrl}/licencias/windows/${idLicencia}`);
+  }
+
+
+
 /*
 Servicios de Gestión de Datos Dispositivos
 */
 
+// Obtener todos los dispositivos
+getDispositivos(): Observable<any[]> {
+  return this.http.get<any[]>(`${this.apiUrl}/dispositivos`);
+}
+
+// Crear un nuevo dispositivo
+createDispositivo(dispositivo: any): Observable<any> {
+  return this.http.post(`${this.apiUrl}/dispositivos`, dispositivo);
+}
+
+// Actualizar un dispositivo existente
+updateDispositivo(dispositivo: any): Observable<any> {
+  return this.http.put(`${this.apiUrl}/dispositivos/${dispositivo.ID_DISPOSITIVO}`, dispositivo);
+}
+
+// Eliminar un dispositivo
+deleteDispositivo(id: number): Observable<any> {
+  return this.http.delete(`${this.apiUrl}/dispositivos/${id}`);
+}
 
 /*
 Servicios de Gestión de Datos Login
 */
+
+  // Obtener todos los clientes
+  getClientes(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/clientes`);
+  }
+
+
+
+
+// En api.service.ts, agrega estos métodos a la clase ApiService
+
+// Agrega estos métodos a tu ApiService:
+
+  verificarVencimientosLicencias(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/licencias/verificar-vencimientos`);
+  }
+
+  enviarAlertaManual(idLicencia: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/licencias/enviar-alerta/${idLicencia}`, {});
+  }
+}
+
+
+
