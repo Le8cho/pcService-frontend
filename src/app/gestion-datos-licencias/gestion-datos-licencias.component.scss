@@ -1,0 +1,669 @@
+// gestion-datos-licencias.component.scss
+
+.gestion-licencias {
+  
+  // Estilos para los botones de tipo de licencia
+  .botones-tipo-licencia {
+    margin-bottom: 1.5rem;
+    
+    .p-button {
+      transition: all 0.3s ease;
+      
+      &:not(.p-button-outlined) {
+        background: var(--primary-color);
+        border-color: var(--primary-color);
+      }
+    }
+  }
+
+  // Estilos para el botón de registrar licencia
+  .boton-registrar {
+    margin-bottom: 1.5rem;
+    
+    .p-button-success {
+      background: var(--green-500);
+      border-color: var(--green-500);
+      
+      &:hover {
+        background: var(--green-600);
+        border-color: var(--green-600);
+      }
+    }
+  }
+
+  // Estilos para la sección de filtros
+  .seccion-filtros {
+    .card {
+      border: 1px solid var(--surface-border);
+      border-radius: var(--border-radius);
+      
+      h5 {
+        color: var(--text-color);
+        margin-bottom: 1rem;
+      }
+    }
+    
+    .botones-filtro {
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      
+      .p-button-outlined {
+        border-color: var(--primary-color);
+        color: var(--primary-color);
+        
+        &:hover {
+          background: var(--primary-color);
+          color: var(--primary-color-text);
+        }
+      }
+      
+      .p-button-secondary {
+        background: var(--surface-100);
+        border-color: var(--surface-300);
+        color: var(--text-color);
+        
+        &:hover {
+          background: var(--surface-200);
+          border-color: var(--surface-400);
+        }
+      }
+    }
+    
+    .opciones-filtro {
+      animation: slideDown 0.3s ease-out;
+      
+      .p-button-outlined {
+        border: 1px dashed var(--surface-300);
+        color: var(--text-color-secondary);
+        
+        &:hover {
+          border-color: var(--primary-color);
+          color: var(--primary-color);
+          background: var(--primary-50);
+        }
+      }
+    }
+  }
+
+  // Estilos para la tabla
+  .tabla-licencias {
+    .p-datatable {
+      .p-datatable-header {
+        background: var(--surface-50);
+        border-bottom: 2px solid var(--primary-color);
+        
+        th {
+          font-weight: 600;
+          color: var(--text-color);
+          border-bottom: 1px solid var(--surface-border);
+        }
+      }
+      
+      .p-datatable-tbody {
+        tr {
+          transition: background-color 0.2s;
+          
+          &:hover {
+            background: var(--surface-hover);
+          }
+          
+          td {
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--surface-border);
+            
+            .p-tag {
+              &.p-tag-success {
+                background: var(--green-100);
+                color: var(--green-800);
+              }
+              
+              &.p-tag-warning {
+                background: var(--yellow-100);
+                color: var(--yellow-800);
+              }
+              
+              &.p-tag-danger {
+                background: var(--red-100);
+                color: var(--red-800);
+              }
+            }
+            
+            .p-button-rounded {
+              width: 2rem;
+              height: 2rem;
+              
+              &.p-button-text {
+                color: var(--primary-color);
+                
+                &:hover {
+                  background: var(--primary-50);
+                }
+              }
+            }
+          }
+        }
+      }
+      
+      .p-paginator {
+        background: var(--surface-ground);
+        border-top: 1px solid var(--surface-border);
+        padding: 0.75rem 1rem;
+        
+        .p-paginator-current {
+          color: var(--text-color-secondary);
+          font-size: 0.875rem;
+        }
+      }
+    }
+  }
+
+  // Estilos para los diálogos
+  .p-dialog {
+    .p-dialog-header {
+      background: var(--surface-ground);
+      border-bottom: 1px solid var(--surface-border);
+      
+      .p-dialog-title {
+        font-weight: 600;
+        color: var(--text-color);
+      }
+    }
+    
+    .p-dialog-content {
+      background: var(--surface-ground);
+      
+      .formgrid {
+        .field {
+          label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-color);
+          }
+          
+          .p-dropdown,
+          .p-calendar,
+          .p-inputnumber {
+            .p-inputtext {
+              width: 100%;
+              border: 1px solid var(--surface-border);
+              border-radius: var(--border-radius);
+              
+              &:focus {
+                border-color: var(--primary-color);
+                box-shadow: 0 0 0 0.2rem var(--primary-50);
+              }
+            }
+          }
+        }
+      }
+    }
+    
+    .p-dialog-footer {
+      background: var(--surface-ground);
+      border-top: 1px solid var(--surface-border);
+      gap: 0.5rem;
+      
+      .p-button {
+        &.p-button-text {
+          color: var(--text-color-secondary);
+          
+          &:hover {
+            background: var(--surface-100);
+            color: var(--text-color);
+          }
+        }
+      }
+    }
+  }
+
+  // Mensajes de estado
+  .mensaje-vacio {
+    text-align: center;
+    padding: 2rem;
+    color: var(--text-color-secondary);
+    font-style: italic;
+  }
+
+  // Estados de carga
+  .estado-carga {
+    text-align: center;
+    padding: 2rem;
+    
+    .pi-spin {
+      font-size: 2rem;
+      color: var(--primary-color);
+    }
+  }
+}
+
+// Animaciones
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+// Responsividad
+@media (max-width: 768px) {
+  .gestion-licencias {
+    .botones-tipo-licencia {
+      .field {
+        margin-bottom: 0.5rem;
+      }
+    }
+    
+    .seccion-filtros {
+      .botones-filtro {
+        flex-direction: column;
+        align-items: stretch;
+        
+        .p-button {
+          margin-bottom: 0.5rem;
+        }
+      }
+      
+      .opciones-filtro {
+        .field {
+          margin-bottom: 1rem;
+        }
+      }
+    }
+    
+    .tabla-licencias {
+      .p-datatable {
+        font-size: 0.875rem;
+        
+        th, td {
+          padding: 0.5rem;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .gestion-licencias {
+    .p-dialog {
+      width: 95vw !important;
+      max-width: 95vw !important;
+    }
+    
+    .tabla-licencias {
+      .p-datatable {
+        .p-datatable-responsive-demo {
+          .p-datatable-tbody {
+            tr {
+              td {
+                &:before {
+                  content: attr(data-label) ": ";
+                  font-weight: bold;
+                  display: inline-block;
+                  width: 120px;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// Variables personalizadas para tematización
+:host {
+  --licencia-primary: var(--primary-color, #3B82F6);
+  --licencia-success: var(--green-500, #10B981);
+  --licencia-warning: var(--yellow-500, #F59E0B);
+  --licencia-danger: var(--red-500, #EF4444);
+  --licencia-surface: var(--surface-ground, #FFFFFF);
+  --licencia-border: var(--surface-border, #E5E7EB);
+}// gestion-datos-licencias.component.scss
+
+.gestion-licencias {
+  
+  // Estilos para los botones de tipo de licencia
+  .botones-tipo-licencia {
+    margin-bottom: 1.5rem;
+    
+    .p-button {
+      transition: all 0.3s ease;
+      
+      &:not(.p-button-outlined) {
+        background: var(--primary-color);
+        border-color: var(--primary-color);
+      }
+    }
+  }
+
+  // Estilos para el botón de registrar licencia
+  .boton-registrar {
+    margin-bottom: 1.5rem;
+    
+    .p-button-success {
+      background: var(--green-500);
+      border-color: var(--green-500);
+      
+      &:hover {
+        background: var(--green-600);
+        border-color: var(--green-600);
+      }
+    }
+  }
+
+  // Estilos para la sección de filtros
+  .seccion-filtros {
+    .card {
+      border: 1px solid var(--surface-border);
+      border-radius: var(--border-radius);
+      
+      h5 {
+        color: var(--text-color);
+        margin-bottom: 1rem;
+      }
+    }
+    
+    .botones-filtro {
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      
+      .p-button-outlined {
+        border-color: var(--primary-color);
+        color: var(--primary-color);
+        
+        &:hover {
+          background: var(--primary-color);
+          color: var(--primary-color-text);
+        }
+      }
+      
+      .p-button-secondary {
+        background: var(--surface-100);
+        border-color: var(--surface-300);
+        color: var(--text-color);
+        
+        &:hover {
+          background: var(--surface-200);
+          border-color: var(--surface-400);
+        }
+      }
+    }
+    
+    .opciones-filtro {
+      animation: slideDown 0.3s ease-out;
+      
+      .p-button-outlined {
+        border: 1px dashed var(--surface-300);
+        color: var(--text-color-secondary);
+        
+        &:hover {
+          border-color: var(--primary-color);
+          color: var(--primary-color);
+          background: var(--primary-50);
+        }
+      }
+    }
+  }
+
+  // Estilos para la tabla
+  .tabla-licencias {
+    .p-datatable {
+      .p-datatable-header {
+        background: var(--surface-50);
+        border-bottom: 2px solid var(--primary-color);
+        
+        th {
+          font-weight: 600;
+          color: var(--text-color);
+          border-bottom: 1px solid var(--surface-border);
+        }
+      }
+      
+      .p-datatable-tbody {
+        tr {
+          transition: background-color 0.2s;
+          
+          &:hover {
+            background: var(--surface-hover);
+          }
+          
+          td {
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--surface-border);
+            
+            .p-tag {
+              &.p-tag-success {
+                background: var(--green-100);
+                color: var(--green-800);
+              }
+              
+              &.p-tag-warning {
+                background: var(--yellow-100);
+                color: var(--yellow-800);
+              }
+              
+              &.p-tag-danger {
+                background: var(--red-100);
+                color: var(--red-800);
+              }
+            }
+            
+            .p-button-rounded {
+              width: 2rem;
+              height: 2rem;
+              
+              &.p-button-text {
+                color: var(--primary-color);
+                
+                &:hover {
+                  background: var(--primary-50);
+                }
+              }
+            }
+          }
+        }
+      }
+      
+      .p-paginator {
+        background: var(--surface-ground);
+        border-top: 1px solid var(--surface-border);
+        padding: 0.75rem 1rem;
+        
+        .p-paginator-current {
+          color: var(--text-color-secondary);
+          font-size: 0.875rem;
+        }
+      }
+    }
+  }
+
+  // Estilos para los diálogos
+  .p-dialog {
+    .p-dialog-header {
+      background: var(--surface-ground);
+      border-bottom: 1px solid var(--surface-border);
+      
+      .p-dialog-title {
+        font-weight: 600;
+        color: var(--text-color);
+      }
+    }
+    
+    .p-dialog-content {
+      background: var(--surface-ground);
+      
+      .formgrid {
+        .field {
+          label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-color);
+          }
+          
+          .p-dropdown,
+          .p-calendar,
+          .p-inputnumber {
+            .p-inputtext {
+              width: 100%;
+              border: 1px solid var(--surface-border);
+              border-radius: var(--border-radius);
+              
+              &:focus {
+                border-color: var(--primary-color);
+                box-shadow: 0 0 0 0.2rem var(--primary-50);
+              }
+            }
+          }
+        }
+      }
+    }
+    
+    .p-dialog-footer {
+      background: var(--surface-ground);
+      border-top: 1px solid var(--surface-border);
+      gap: 0.5rem;
+      
+      .p-button {
+        &.p-button-text {
+          color: var(--text-color-secondary);
+          
+          &:hover {
+            background: var(--surface-100);
+            color: var(--text-color);
+          }
+        }
+      }
+    }
+  }
+
+  // Mensajes de estado
+  .mensaje-vacio {
+    text-align: center;
+    padding: 2rem;
+    color: var(--text-color-secondary);
+    font-style: italic;
+  }
+
+  // Estados de carga
+  .estado-carga {
+    text-align: center;
+    padding: 2rem;
+    
+    .pi-spin {
+      font-size: 2rem;
+      color: var(--primary-color);
+    }
+  }
+}
+
+// Animaciones
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+// Responsividad
+@media (max-width: 768px) {
+  .gestion-licencias {
+    .botones-tipo-licencia {
+      .field {
+        margin-bottom: 0.5rem;
+      }
+    }
+    
+    .seccion-filtros {
+      .botones-filtro {
+        flex-direction: column;
+        align-items: stretch;
+        
+        .p-button {
+          margin-bottom: 0.5rem;
+        }
+      }
+      
+      .opciones-filtro {
+        .field {
+          margin-bottom: 1rem;
+        }
+      }
+    }
+    
+    .tabla-licencias {
+      .p-datatable {
+        font-size: 0.875rem;
+        
+        th, td {
+          padding: 0.5rem;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .gestion-licencias {
+    .p-dialog {
+      width: 95vw !important;
+      max-width: 95vw !important;
+    }
+    
+    .tabla-licencias {
+      .p-datatable {
+        .p-datatable-responsive-demo {
+          .p-datatable-tbody {
+            tr {
+              td {
+                &:before {
+                  content: attr(data-label) ": ";
+                  font-weight: bold;
+                  display: inline-block;
+                  width: 120px;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// Variables personalizadas para tematización
+:host {
+  --licencia-primary: var(--primary-color, #3B82F6);
+  --licencia-success: var(--green-500, #10B981);
+  --licencia-warning: var(--yellow-500, #F59E0B);
+  --licencia-danger: var(--red-500, #EF4444);
+  --licencia-surface: var(--surface-ground, #FFFFFF);
+  --licencia-border: var(--surface-border, #E5E7EB);
+}
