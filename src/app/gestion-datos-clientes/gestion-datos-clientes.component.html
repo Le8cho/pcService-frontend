@@ -1,1 +1,189 @@
-<p>gestion-datos-clientes works!</p>
+
+<div class="grid">
+    <div class="col-12">
+        <div class="card px-6 py-6">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">Gestión de Clientes</h2>
+            
+            <!-- Barra de búsqueda y botón nuevo -->
+            <div class="flex justify-content-between align-items-center mb-4">
+                <div class="p-input-icon-left">
+                    <i class="pi pi-search"></i>
+                    <input 
+                        type="text" 
+                        pInputText 
+                        placeholder="Buscar clientes..." 
+                        [(ngModel)]="terminoBusqueda"
+                        (input)="buscarClientes()"
+                        class="w-20rem"
+                    />
+                </div>
+                <p-button 
+                    label="Registrar Cliente" 
+                    icon="pi pi-plus" 
+                    (click)="nuevoCliente()"
+                    class="p-button-success">
+                </p-button>
+            </div>
+
+            <!-- Tabla de clientes -->
+            <p-table 
+                [value]="clientes" 
+                [paginator]="true" 
+                [rows]="10" 
+                [showCurrentPageReport]="true"
+                currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} clientes"
+                [rowsPerPageOptions]="[10, 25, 50]"
+                styleClass="p-datatable-gridlines">
+                
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th class="bg-red-700 text-white">ID</th>
+                        <th class="bg-red-700 text-white">Nombre</th>
+                        <th class="bg-red-700 text-white">Apellido</th>
+                        <th class="bg-red-700 text-white">Dirección</th>
+                        <th class="bg-red-700 text-white">Celular</th>
+                        <th class="bg-red-700 text-white">Correo</th>
+                        <th class="bg-red-700 text-white">Acciones</th>
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="body" let-cliente>
+                    <tr>
+                        <td>{{ cliente.id_cliente }}</td>
+                        <td>{{ cliente.nombre }}</td>
+                        <td>{{ cliente.apellido }}</td>
+                        <td>{{ cliente.direccion }}</td>
+                        <td>{{ cliente.celular }}</td>
+                        <td>{{ cliente.correo }}</td>
+                        <td>
+                            <p-button 
+                                icon="pi pi-pencil" 
+                                (click)="editarCliente(cliente)"
+                                class="p-button-rounded p-button-success p-button-text mr-2"
+                                pTooltip="Modificar">
+                            </p-button>
+                            <p-button 
+                                icon="pi pi-trash" 
+                                (click)="eliminarCliente(cliente)"
+                                class="p-button-rounded p-button-warning p-button-text"
+                                pTooltip="Eliminar">
+                            </p-button>
+                        </td>
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td colspan="7" class="text-center py-4">
+                            No se encontraron clientes
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+</div>
+
+<!-- Dialog para registrar/modificar cliente -->
+<p-dialog 
+    [(visible)]="mostrarDialog" 
+    [header]="modoEdicion ? 'Modificar Cliente' : 'Registrar Nuevo Cliente'"
+    [modal]="true" 
+    [style]="{width: '450px'}"
+    [closable]="true">
+    
+    <div class="flex flex-column gap-3">
+        <div *ngIf="modoEdicion" class="field">
+            <label for="id_cliente" class="font-semibold">ID</label>
+            <input 
+                type="text" 
+                pInputText 
+                id="id_cliente" 
+                [(ngModel)]="clienteSeleccionado.id_cliente"
+                [disabled]="true"
+                class="w-full"
+            />
+        </div>
+
+        <div class="field">
+            <label for="nombre" class="font-semibold">Nombre</label>
+            <input 
+                type="text" 
+                pInputText 
+                id="nombre" 
+                [(ngModel)]="clienteSeleccionado.nombre"
+                placeholder="Ingrese el nombre"
+                class="w-full"
+            />
+        </div>
+
+        <div class="field">
+            <label for="apellido" class="font-semibold">Apellido</label>
+            <input 
+                type="text" 
+                pInputText 
+                id="apellido" 
+                [(ngModel)]="clienteSeleccionado.apellido"
+                placeholder="Ingrese el apellido"
+                class="w-full"
+            />
+        </div>
+
+        <div class="field">
+            <label for="direccion" class="font-semibold">Dirección</label>
+            <input 
+                type="text" 
+                pInputText 
+                id="direccion" 
+                [(ngModel)]="clienteSeleccionado.direccion"
+                placeholder="Ingrese la dirección"
+                class="w-full"
+            />
+        </div>
+
+        <div class="field">
+            <label for="celular" class="font-semibold">Celular</label>
+            <input 
+                type="text" 
+                pInputText 
+                id="celular" 
+                [(ngModel)]="clienteSeleccionado.celular"
+                placeholder="Ingrese el número de celular"
+                class="w-full"
+            />
+        </div>
+
+        <div class="field">
+            <label for="correo" class="font-semibold">Correo</label>
+            <input 
+                type="email" 
+                pInputText 
+                id="correo" 
+                [(ngModel)]="clienteSeleccionado.correo"
+                placeholder="Ingrese el correo electrónico"
+                class="w-full"
+            />
+        </div>
+    </div>
+
+    <ng-template pTemplate="footer">
+        <p-button 
+            label="Cancelar" 
+            icon="pi pi-times" 
+            (click)="ocultarDialog()"
+            class="p-button-text">
+        </p-button>
+        <p-button 
+            [label]="modoEdicion ? 'Guardar Cambios' : 'Guardar'"
+            icon="pi pi-check" 
+            (click)="guardarCliente()"
+            class="p-button-success">
+        </p-button>
+    </ng-template>
+</p-dialog>
+
+<!-- Toast para mensajes -->
+<p-toast></p-toast>
+
+<!-- Confirm Dialog -->
+<p-confirmDialog></p-confirmDialog>
