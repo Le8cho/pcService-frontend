@@ -28,7 +28,7 @@ export const appRoutes: Routes = [
             { path: 'pages', loadChildren: () => import('./app/pages/pages.routes') },
             { path: 'gestion-datos-licencias', component: GestionDatosLicenciasComponent },
             { path: 'licencias', component: GestionDatosLicenciasComponent },
-            { path: 'gestion-datos-dispositivos', component: GestionDatosDispositivosComponent }
+            { path: 'gestion-datos-dispositivos', component: GestionDatosDispositivosComponent },
             { path: 'gestion-servicios', component: GestionDatosServiciosComponent },
             { path: 'gestion-mantenimientos', component: GestionDatosMantenimientoComponent },
   
