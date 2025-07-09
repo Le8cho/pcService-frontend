@@ -75,7 +75,7 @@ export class GestionDatosServiciosComponent implements OnInit {
     }
 
     loadClientes() {
-        this.servicioService.getClientes().subscribe(data => {
+        this.servicioService.getClientesServicio().subscribe(data => {
             this.clienteOptions = data.map(cliente => ({
                 label: `${cliente.nombre} ${cliente.apellido}`,
                 value: cliente.id_cliente

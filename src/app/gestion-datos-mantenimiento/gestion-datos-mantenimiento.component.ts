@@ -79,7 +79,7 @@ export class GestionDatosMantenimientoComponent implements OnInit {
     }
 
     loadClientes() {
-        this.mantenimientoService.getClientes().subscribe({
+        this.mantenimientoService.getClientesMantenimiento().subscribe({
             next: (clientes) => {
                 this.clientes = clientes;
                 this.clienteOptions = clientes.map(cliente => ({
