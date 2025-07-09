@@ -233,6 +233,9 @@ export class ServicioService {
   getClientes(): Observable<Cliente[]> {
     return this.apiService.get<Cliente[]>('/clientes');
   }
+    getClientesServicio(): Observable<Cliente[]> {
+    return this.apiService.get<Cliente[]>('/clientesServicios');
+  }
 
   // Helper para formatear fechas
   private formatDateForBackend(date: Date | string): string {
@@ -317,7 +320,9 @@ export class MantenimientoService {
   getClientes(): Observable<Cliente[]> {
     return this.apiService.get<Cliente[]>('/clientes');
   }
-
+  getClientesMantenimiento(): Observable<Cliente[]> {
+    return this.apiService.get<Cliente[]>('/clientesMantenimiento');
+  }
   getDispositivosByCliente(clienteId: number): Observable<Dispositivo[]> {
     return this.apiService.get<Dispositivo[]>(`/dispositivos/cliente/${clienteId}`);
   }
