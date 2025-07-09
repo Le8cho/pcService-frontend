@@ -324,7 +324,7 @@ export class MantenimientoService {
     return this.apiService.get<Cliente[]>('/clientesMantenimiento');
   }
   getDispositivosByCliente(clienteId: number): Observable<Dispositivo[]> {
-    return this.apiService.get<Dispositivo[]>(`/dispositivos/cliente/${clienteId}`);
+    return this.apiService.get<Dispositivo[]>(`/dispositivo/cliente/${clienteId}`);
   }
 
   // Método helper para formatear fechas

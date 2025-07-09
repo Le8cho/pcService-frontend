@@ -168,31 +168,34 @@
                 
                 <ng-template pTemplate="content">
                     <div class="field">
-                        <label for="equipos">Equipos/Descripción *</label>
-                        <input 
-                            type="text" 
-                            pInputText 
-                            id="equipos" 
-                            [(ngModel)]="mantenimientoForm.equipos" 
-                            required 
-                            autofocus 
-                            [ngClass]="{'ng-invalid ng-dirty' : !mantenimientoForm.equipos}">
-                        <small class="ng-dirty ng-invalid" *ngIf="!mantenimientoForm.equipos">
-                            Descripción del equipo es requerida.
-                        </small>
-                    </div>
-
-                    <div class="field">
                         <label for="codCliente">Cliente *</label>
                         <p-dropdown 
                             id="codCliente"
                             [(ngModel)]="mantenimientoForm.cod_cliente"
                             [options]="clienteOptions"
                             placeholder="Seleccionar cliente"
-                            [ngClass]="{'ng-invalid ng-dirty' : !mantenimientoForm.cod_cliente}">
+                            [ngClass]="{'ng-invalid ng-dirty' : !mantenimientoForm.cod_cliente}"
+                            (onChange)="onClienteChange($event)">
                         </p-dropdown>
                         <small class="ng-dirty ng-invalid" *ngIf="!mantenimientoForm.cod_cliente">
                             Cliente es requerido.
+                        </small>
+                    </div>
+
+                    <div class="field">
+                        <label for="dispositivo">Dispositivo *</label>
+                        <p-dropdown
+                            id="dispositivo"
+                            [(ngModel)]="dispositivoSeleccionado"
+                            [options]="dispositivosCliente"
+                            optionLabel="displayName"
+                            [filter]="true" filterBy="displayName"
+                            [disabled]="!mantenimientoForm.cod_cliente"
+                            placeholder="Seleccione un dispositivo"
+                            [ngClass]="{'ng-invalid ng-dirty' : !dispositivoSeleccionado}">
+                        </p-dropdown>
+                        <small class="ng-dirty ng-invalid" *ngIf="!dispositivoSeleccionado">
+                            Dispositivo es requerido.
                         </small>
                     </div>
 

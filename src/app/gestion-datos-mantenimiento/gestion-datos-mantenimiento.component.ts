@@ -56,6 +56,10 @@ export class GestionDatosMantenimientoComponent implements OnInit {
     searchTerm: string = '';
     loading: boolean = false;
 
+    clienteSeleccionado: Cliente | null = null;
+    dispositivosCliente: any[] = [];
+    dispositivoSeleccionado: any = null;
+
     // Opciones para dropdowns
     frecuenciaOptions = [
         { label: 'Mensual', value: 'Mensual' },
@@ -81,7 +85,7 @@ export class GestionDatosMantenimientoComponent implements OnInit {
     loadClientes() {
         this.mantenimientoService.getClientesMantenimiento().subscribe({
             next: (clientes) => {
-                this.clientes = clientes;
+                this.clientes = clientes; // Populate the 'clientes' array
                 this.clienteOptions = clientes.map(cliente => ({
                     label: `${cliente.nombre} ${cliente.apellido} (${this.mantenimientoService.generateClienteCode(cliente.id_cliente || 0)})`,
                     value: cliente.id_cliente
@@ -123,6 +127,34 @@ export class GestionDatosMantenimientoComponent implements OnInit {
         this.mantenimientoForm = this.resetForm();
         this.editMode = false;
         this.mantenimientoDialog = true;
+        this.clienteSeleccionado = null;
+        this.dispositivoSeleccionado = null;
+        this.dispositivosCliente = [];
+    }
+
+    onClienteChange(event: any) {
+        const clienteId = event.value; // Assuming event.value contains the client ID
+        this.dispositivoSeleccionado = null;
+        this.dispositivosCliente = [];
+        if (clienteId) {
+            this.mantenimientoService.getDispositivosByCliente(clienteId).subscribe({
+                next: (dispositivos) => {
+                    this.dispositivosCliente = dispositivos.map(d => ({
+                        ...d,
+                        displayName: `${d.marca} ${d.modelo} (${d.tipo_dispositivo})`
+                    }));
+                },
+                error: (error) => {
+                    console.error('Error al cargar dispositivos:', error);
+                    this.messageService.add({
+                        severity: 'error',
+                        summary: 'Error',
+                        detail: 'No se pudieron cargar los dispositivos del cliente',
+                        life: 3000
+                    });
+                }
+            });
+        }
     }
 
     editMantenimiento(mantenimiento: Mantenimiento) {
@@ -132,6 +164,9 @@ export class GestionDatosMantenimientoComponent implements OnInit {
         // Convertir el código de cliente (CL001) a ID numérico
         const clienteId = this.mantenimientoService.extractClienteId(mantenimiento.cod_cliente || '');
         
+        // Set clienteSeleccionado
+        this.clienteSeleccionado = this.clientes.find(c => c.id_cliente === clienteId) || null;
+
         this.mantenimientoForm = {
             mantPrev: mantenimiento.mant_prev || '',
             cod_cliente: clienteId,
@@ -142,6 +177,24 @@ export class GestionDatosMantenimientoComponent implements OnInit {
             frecuencia: mantenimiento.frecuencia || '',
             prox_fecha: new Date(mantenimiento.prox_mantenimiento || '')
         };
+
+        // Trigger onClienteChange to load devices for the selected client
+        if (this.clienteSeleccionado) {
+            this.onClienteChange({ value: this.clienteSeleccionado.id_cliente });
+        }
+
+        // Set dispositivoSeleccionado after devices are loaded
+        if (mantenimiento.equipos) {
+            setTimeout(() => {
+                const foundDevice = this.dispositivosCliente.find(d => d.displayName === mantenimiento.equipos);
+                if (foundDevice) {
+                    this.dispositivoSeleccionado = foundDevice;
+                } else {
+                    console.warn(`Dispositivo '${mantenimiento.equipos}' no encontrado en las opciones para el cliente ${clienteId}`);
+                    this.dispositivoSeleccionado = null;
+                }
+            }, 100); // Small delay to ensure options are populated
+        }
         this.mantenimientoDialog = true;
     }
 
@@ -179,9 +232,12 @@ export class GestionDatosMantenimientoComponent implements OnInit {
 
     saveMantenimiento() {
         if (this.validateForm()) {
+            // Set equipos from selected device's displayName before creating formData
+            this.mantenimientoForm.equipos = this.dispositivoSeleccionado ? this.dispositivoSeleccionado.displayName : '';
+
             const formData = {
                 id_cliente: this.mantenimientoForm.cod_cliente,
-                equipos: this.mantenimientoForm.equipos,
+                equipos: this.mantenimientoForm.equipos, // Send the descriptive string
                 frecuencia: this.mantenimientoForm.frecuencia,
                 fecha_mantenimiento: this.mantenimientoForm.fecha_mantenimiento,
                 prox_fecha: this.mantenimientoForm.prox_fecha,
@@ -240,7 +296,7 @@ export class GestionDatosMantenimientoComponent implements OnInit {
     }
 
     validateForm(): boolean {
-        if (!this.mantenimientoForm.cod_cliente || !this.mantenimientoForm.equipos || 
+        if (!this.mantenimientoForm.cod_cliente || !this.dispositivoSeleccionado || 
             !this.mantenimientoForm.frecuencia) {
             this.messageService.add({
                 severity: 'error',
@@ -258,6 +314,9 @@ export class GestionDatosMantenimientoComponent implements OnInit {
         this.editMode = false;
         this.selectedMantenimiento = null;
         this.mantenimientoForm = this.resetForm();
+        this.clienteSeleccionado = null;
+        this.dispositivoSeleccionado = null;
+        this.dispositivosCliente = [];
     }
 
     resetForm(): MantenimientoForm {
