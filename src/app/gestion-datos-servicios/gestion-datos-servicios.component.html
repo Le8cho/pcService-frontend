@@ -12,7 +12,7 @@
                         pRipple 
                         label="NUEVO" 
                         icon="pi pi-plus" 
-                        class="p-button-success mr-2" 
+                        class="p-button-primary mr-2" 
                         (click)="openNew()">
                     </button>
                 </ng-template>
@@ -23,10 +23,10 @@
                     <input 
                         type="text" 
                         pInputText 
-                        placeholder="Buscar por #Servicio, cliente o detalle..." 
+                        placeholder="Buscar por ..." 
                         [(ngModel)]="searchTerm"
-                        (keyup.enter)="searchServicios()"
-                        style="width: 350px;">
+                        (input)="searchServicios()"
+                        style="width: 300px;">
                     <button 
                         pButton 
                         pRipple 
@@ -102,22 +102,8 @@
                         <td>{{servicio.egreso | currency:'S/ '}}</td>
                         <td>
                             <div class="flex">
-                                <button 
-                                    pButton 
-                                    pRipple 
-                                    icon="pi pi-pencil" 
-                                    class="p-button-rounded p-button-success mr-2" 
-                                    (click)="editServicio(servicio)"
-                                    pTooltip="Editar">
-                                </button>
-                                <button 
-                                    pButton 
-                                    pRipple 
-                                    icon="pi pi-trash" 
-                                    class="p-button-rounded p-button-warning" 
-                                    (click)="deleteServicio(servicio)"
-                                    pTooltip="Eliminar">
-                                </button>
+                                <button pButton icon="pi pi-pencil" (click)="editServicio(servicio)"></button>
+                                <button pButton icon="pi pi-trash" (click)="deleteServicio(servicio)"></button>
                             </div>
                         </td>
                     </tr>
