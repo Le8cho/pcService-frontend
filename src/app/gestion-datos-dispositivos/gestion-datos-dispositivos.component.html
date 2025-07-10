@@ -1,6 +1,11 @@
 <div class="card">
   <h2>Gestión de Dispositivos</h2>
+  <p-toast></p-toast>
+
+  <!-- BOTÓN REGISTRAR DISPOSITIVO -->
   <button pButton type="button" label="Registrar Dispositivo" icon="pi pi-plus" (click)="abrirDialogoDispositivo()"></button>
+  
+  <!-- TABLA CON LOS DISPOSITIVOS -->
   <p-table [value]="dispositivos" [paginator]="true" [rows]="10">
     <ng-template pTemplate="header">
       <tr>
@@ -27,24 +32,48 @@
     </ng-template>
   </p-table>
 </div>
+
 <!-- Diálogo para crear/editar dispositivo -->
 <p-dialog header="{{editandoDispositivo ? 'Editar' : 'Registrar'}} Dispositivo" [(visible)]="mostrarDialogoDispositivo" [modal]="true" [style]="{width: '400px'}">
   <div class="p-fluid">
     <div class="p-field">
-      <label for="idCliente">ID Cliente</label>
-      <input id="idCliente" type="number" pInputText [(ngModel)]="dispositivoSeleccionado.ID_CLIENTE" />
+      <label for="idCliente">Cliente *</label>
+      <p-dropdown 
+        id="idCliente"
+        [(ngModel)]="dispositivoSeleccionado.ID_CLIENTE"
+        [options]="clienteOptions"
+        placeholder="Seleccionar un cliente"
+        [filter]="true" 
+        filterBy="label"
+        [ngClass]="{'ng-invalid ng-dirty' : !dispositivoSeleccionado.ID_CLIENTE}">
+      </p-dropdown>
+      <small class="ng-dirty ng-invalid" *ngIf="!dispositivoSeleccionado.ID_CLIENTE">
+        El cliente es requerido.
+      </small>
     </div>
     <div class="p-field">
-      <label for="tipo">Tipo de Dispositivo</label>
-      <input id="tipo" type="text" pInputText [(ngModel)]="dispositivoSeleccionado.TIPO_DISPOSITIVO" />
+      <label for="tipo">Tipo de Dispositivo *</label>
+      <input id="tipo" type="text" pInputText [(ngModel)]="dispositivoSeleccionado.TIPO_DISPOSITIVO" 
+        [ngClass]="{'ng-invalid ng-dirty' : !dispositivoSeleccionado.TIPO_DISPOSITIVO}" />
+      <small class="ng-dirty ng-invalid" *ngIf="!dispositivoSeleccionado.TIPO_DISPOSITIVO">
+        El tipo de dispositivo es requerido.
+      </small>
     </div>
     <div class="p-field">
-      <label for="marca">Marca</label>
-      <input id="marca" type="text" pInputText [(ngModel)]="dispositivoSeleccionado.MARCA" />
+      <label for="marca">Marca *</label>
+      <input id="marca" type="text" pInputText [(ngModel)]="dispositivoSeleccionado.MARCA" 
+        [ngClass]="{'ng-invalid ng-dirty' : !dispositivoSeleccionado.MARCA}" />
+      <small class="ng-dirty ng-invalid" *ngIf="!dispositivoSeleccionado.MARCA">
+        La marca es requerida.
+      </small>
     </div>
     <div class="p-field">
-      <label for="modelo">Modelo</label>
-      <input id="modelo" type="text" pInputText [(ngModel)]="dispositivoSeleccionado.MODELO" />
+      <label for="modelo">Modelo *</label>
+      <input id="modelo" type="text" pInputText [(ngModel)]="dispositivoSeleccionado.MODELO" 
+        [ngClass]="{'ng-invalid ng-dirty' : !dispositivoSeleccionado.MODELO}" />
+      <small class="ng-dirty ng-invalid" *ngIf="!dispositivoSeleccionado.MODELO">
+        El modelo es requerido.
+      </small>
     </div>
   </div>
   <ng-template pTemplate="footer">
@@ -52,3 +81,5 @@
     <button pButton label="Guardar" icon="pi pi-check" (click)="guardarDispositivo()"></button>
   </ng-template>
 </p-dialog>
+
+<p-confirmDialog [style]="{width: '425px'}"></p-confirmDialog>

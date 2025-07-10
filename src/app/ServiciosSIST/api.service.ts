@@ -156,6 +156,11 @@ Servicios de Gestión de Datos Login
     return this.http.get<any[]>(`${this.apiUrl}/clientes`);
   }
 
+  // Obtener clientes para dispositivos
+  verClienteDispositivos(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/clientesDispositivos`);
+  }
+
 
 
 
