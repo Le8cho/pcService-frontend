@@ -1,6 +1,10 @@
 <div class="card">
   <h2>Gestión de Dispositivos</h2>
+
+  <!-- BOTÓN REGISTRAR DISPOSITIVO -->
   <button pButton type="button" label="Registrar Dispositivo" icon="pi pi-plus" (click)="abrirDialogoDispositivo()"></button>
+  
+  <!-- TABLA CON LOS DISPOSITIVOS -->
   <p-table [value]="dispositivos" [paginator]="true" [rows]="10">
     <ng-template pTemplate="header">
       <tr>

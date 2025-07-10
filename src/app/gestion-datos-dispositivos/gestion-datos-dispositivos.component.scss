@@ -1,0 +1,34 @@
+// ESPACIO ENTRE LOS BOTONES DE LA TABLA
+td:last-child {
+    display: flex;
+    justify-content: left;
+    gap: 0.5rem;
+}
+td:last-child button {
+    text-align: center;
+}
+button[label="Registrar Dispositivo"] {
+    margin-bottom: 1rem;
+}
+
+// ESPACIO ENTRE LA TABLA Y EL BOTÓN DE REGISTRO
+.p-field {
+    display: flex;
+    flex-direction: column;
+    gap:0.5rem;
+}
+input {
+    width: 100%;
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    border: 1px solid #ccc;
+}
+
+// ESPACIO ENTRE LOS CAMPOS DEL FORMULARIO
+.p-fluid {
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    justify-content: space-between;
+    gap: 1.5rem;
+}
