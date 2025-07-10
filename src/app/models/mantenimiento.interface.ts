@@ -52,6 +52,7 @@ export interface MantenimientoForm {
     egreso: number;
     frecuencia: string;
     prox_fecha: Date;
+    descripcion: string; // Descripción del mantenimiento
 }
 
 // Modelo para crear un nuevo mantenimiento (payload al backend)

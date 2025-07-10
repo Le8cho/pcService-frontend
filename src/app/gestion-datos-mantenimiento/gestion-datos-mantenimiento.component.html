@@ -118,12 +118,10 @@
                             {{mantenimiento.equipos}}
                         </td>
                         <td>
-                            <span class="p-column-title">Ingreso</span>
-                            {{mantenimiento.ingreso | date:'dd/MM/yyyy'}}
+                            {{mantenimiento.ingreso | number}}
                         </td>
                         <td>
-                            <span class="p-column-title">Egreso</span>
-                            {{mantenimiento.egreso | date:'dd/MM/yyyy'}}
+                            {{mantenimiento.egreso | number}}
                         </td>
                         <td>
                             <span class="p-column-title">Frecuencia</span>
@@ -199,26 +197,51 @@
                         </small>
                     </div>
 
+                    <div class="field">
+                        <label for="descripcion">Descripción del Mantenimiento *</label>
+                        <textarea 
+                            id="descripcion"
+                            pInputTextarea 
+                            [(ngModel)]="mantenimientoForm.descripcion"
+                            [rows]="3" 
+                            [cols]="30"
+                            placeholder="Describa el trabajo realizado en el mantenimiento..."
+                            [ngClass]="{'ng-invalid ng-dirty' : !mantenimientoForm.descripcion.trim()}">
+                        </textarea>
+                        <small class="ng-dirty ng-invalid" *ngIf="!mantenimientoForm.descripcion.trim()">
+                            La descripción es requerida.
+                        </small>
+                    </div>
+
                     <div class="formgrid grid">
                         <div class="field col">
-                            <label for="fechaMantenimiento">Fecha Mantenimiento *</label>
-                            <p-calendar 
-                                id="fechaMantenimiento"
-                                [(ngModel)]="mantenimientoForm.fecha_mantenimiento"
-                                dateFormat="dd/mm/yy"
-                                [showIcon]="true">
-                            </p-calendar>
+                            <label for="frecuencia">Frecuencia *</label>
+                            <p-dropdown
+                                id="frecuencia"
+                                [(ngModel)]="mantenimientoForm.frecuencia"
+                                [options]="frecuenciaOptions"
+                                placeholder="Seleccionar frecuencia"
+                                (onChange)="onFrecuenciaChange()"
+                                [ngClass]="{'ng-invalid ng-dirty' : !mantenimientoForm.frecuencia}">
+                            </p-dropdown>
+                            <small class="ng-dirty ng-invalid" *ngIf="!mantenimientoForm.frecuencia">
+                                Frecuencia es requerida.
+                            </small>
                         </div>
 
                         <div class="field col">
-                            <label for="frecuencia">Frecuencia *</label>
-                            <p-dropdown 
-                                id="frecuencia"
-                                [(ngModel)]="mantenimientoForm.frecuencia" 
-                                [options]="frecuenciaOptions" 
-                                placeholder="Seleccionar frecuencia"
-                                [ngClass]="{'ng-invalid ng-dirty' : !mantenimientoForm.frecuencia}">
-                            </p-dropdown>
+                            <label for="fechaMantenimiento">Fecha de Mantenimiento *</label>
+                            <p-calendar
+                                id="fechaMantenimiento"
+                                [(ngModel)]="mantenimientoForm.fecha_mantenimiento"
+                                dateFormat="yy-mm-dd"
+                                (onSelect)="onFechaMantenimientoChange()"
+                                [showIcon]="true"
+                                [ngClass]="{'ng-invalid ng-dirty' : !mantenimientoForm.fecha_mantenimiento}">
+                            </p-calendar>
+                            <small class="ng-dirty ng-invalid" *ngIf="!mantenimientoForm.fecha_mantenimiento">
+                                Fecha de mantenimiento es requerida.
+                            </small>
                         </div>
                     </div>
 
@@ -248,11 +271,12 @@
 
                     <div class="field">
                         <label for="proxFecha">Próxima Fecha</label>
-                        <p-calendar 
+                        <p-calendar
                             id="proxFecha"
                             [(ngModel)]="mantenimientoForm.prox_fecha"
-                            dateFormat="dd/mm/yy"
-                            [showIcon]="true">
+                            dateFormat="yy-mm-dd"
+                            [showIcon]="true"
+                            [disabled]="true">
                         </p-calendar>
                     </div>
                 </ng-template>
