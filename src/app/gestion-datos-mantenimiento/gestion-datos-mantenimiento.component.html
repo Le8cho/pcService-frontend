@@ -1,99 +1,308 @@
 
+
 <!-- gestion-datos-mantenimiento.component.html -->
-<div class="card">
-  <h2 class="mb-4">Gestión de Mantenimiento de Computadoras</h2>
-  <p-toast></p-toast>
+<div class="grid">
+  <div class="col-12">
+      <div class="card px-6 py-6">
+          <p-toast></p-toast>
+          <p-toolbar styleClass="mb-4">
+              <ng-template pTemplate="left">
+                  <h2 class="m-0">Gestión de Mantenimiento de Computadoras</h2>
+              </ng-template>
+              <ng-template pTemplate="right">
+                  <button 
+                      pButton 
+                      pRipple 
+                      label="NUEVO" 
+                      icon="pi pi-plus" 
+                      class="p-button-success mr-2" 
+                      (click)="openNew()">
+                  </button>
+              </ng-template>
+          </p-toolbar>
 
-  <!-- Buscador y botón nuevo -->
-  <div class="flex justify-content-between align-items-center mb-4">
-    <div class="p-inputgroup">
-      <input 
-        type="text" 
-        pInputText 
-        placeholder="Buscar por cliente o equipo..." 
-        [(ngModel)]="searchTerm"
-        (keyup.enter)="searchMantenimientos()"
-        style="width: 300px;">
-      <button 
-        pButton 
-        pRipple 
-        type="button" 
-        icon="pi pi-search" 
-        class="p-button-primary"
-        (click)="searchMantenimientos()">
-      </button>
-      <button 
-        pButton 
-        pRipple 
-        type="button" 
-        icon="pi pi-times" 
-        class="p-button-secondary"
-        (click)="clearSearch()"
-        *ngIf="searchTerm">
-      </button>
-    </div>
-    <button 
-      pButton 
-      pRipple 
-      label="NUEVO" 
-      icon="pi pi-plus" 
-      class="p-button-success mb-3"
-      (click)="openNew()">
-    </button>
+          <!-- Búsqueda -->
+          <div class="mb-4">
+              <div class="p-inputgroup">
+                  <input 
+                      type="text" 
+                      pInputText 
+                      placeholder="Buscar por ID, cliente o equipo..." 
+                      [(ngModel)]="searchTerm"
+                      (keyup.enter)="searchMantenimientos()"
+                      style="width: 300px;">
+                  <button 
+                      pButton 
+                      pRipple 
+                      type="button" 
+                      icon="pi pi-search" 
+                      class="p-button-primary"
+                      label="BUSCAR"
+                      (click)="searchMantenimientos()">
+                  </button>
+                  <button 
+                      pButton 
+                      pRipple 
+                      type="button" 
+                      icon="pi pi-times" 
+                      class="p-button-secondary"
+                      (click)="clearSearch()"
+                      *ngIf="searchTerm">
+                  </button>
+              </div>
+          </div>
+
+          <!-- Tabla de Mantenimientos -->
+          <p-table 
+              #dt 
+              [value]="mantenimientos" 
+              [rows]="10" 
+              [paginator]="true"
+              [globalFilterFields]="['mantPrev','cod_cliente','nombre_cliente','equipos','frecuencia']"
+              [loading]="loading"
+              responsiveLayout="scroll">
+              
+              <ng-template pTemplate="header">
+                  <tr>
+                      <th pSortableColumn="mantPrev">
+                          #MantPrev 
+                          <p-sortIcon field="mantPrev"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="cod_cliente">
+                          Cod_Cliente 
+                          <p-sortIcon field="cod_cliente"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="fecha">
+                          Fecha Mantenimiento 
+                          <p-sortIcon field="fecha"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="equipos">
+                          Equipos 
+                          <p-sortIcon field="equipos"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="ingreso">
+                          Ingreso 
+                          <p-sortIcon field="ingreso"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="egreso">
+                          Egreso 
+                          <p-sortIcon field="egreso"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="frecuencia">
+                          Frecuencia 
+                          <p-sortIcon field="frecuencia"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="prox_mantenimiento">
+                          Próxima Fecha 
+                          <p-sortIcon field="prox_mantenimiento"></p-sortIcon>
+                      </th>
+                      <th>Acciones</th>
+                  </tr>
+              </ng-template>
+              
+              <ng-template pTemplate="body" let-mantenimiento>
+                  <tr>
+                      <td>
+                          <span class="p-column-title">#MantPrev</span>
+                          {{mantenimiento.mantPrev}}
+                      </td>
+                      <td>
+                          <span class="p-column-title">Cod_Cliente</span>
+                          {{mantenimiento.cod_cliente}}
+                      </td>
+                      <td>
+                          <span class="p-column-title">Fecha Mantenimiento</span>
+                          {{mantenimiento.fecha | date:'dd/MM/yyyy'}}
+                      </td>
+                      <td>
+                          <span class="p-column-title">Equipos</span>
+                          {{mantenimiento.equipos}}
+                      </td>
+                      <td>
+                          {{mantenimiento.ingreso | number}}
+                      </td>
+                      <td>
+                          {{mantenimiento.egreso | number}}
+                      </td>
+                      <td>
+                          <span class="p-column-title">Frecuencia</span>
+                          {{mantenimiento.frecuencia}}
+                      </td>
+                      <td>
+                          <span class="p-column-title">Próxima Fecha</span>
+                          {{mantenimiento.prox_mantenimiento | date:'dd/MM/yyyy'}}
+                      </td>
+                      <td>
+                          <div class="flex">
+                              <button 
+                                  pButton 
+                                  pRipple 
+                                  icon="pi pi-pencil" 
+                                  class="p-button-rounded p-button-success mr-2" 
+                                  (click)="editMantenimiento(mantenimiento)"
+                                  pTooltip="Editar">
+                              </button>
+                              <button 
+                                  pButton 
+                                  pRipple 
+                                  icon="pi pi-trash" 
+                                  class="p-button-rounded p-button-warning" 
+                                  (click)="deleteMantenimiento(mantenimiento)"
+                                  pTooltip="Eliminar">
+                              </button>
+                          </div>
+                      </td>
+                  </tr>
+              </ng-template>
+          </p-table>
+
+          <!-- Dialog para Nuevo/Editar Mantenimiento -->
+          <p-dialog 
+              [(visible)]="mantenimientoDialog" 
+              [header]="editMode ? 'Editar Mantenimiento' : 'Nuevo Mantenimiento'"
+              [modal]="true" 
+              class="p-fluid" 
+              [style]="{width: '600px'}"
+              [closable]="true">
+              
+              <ng-template pTemplate="content">
+                  <div class="field">
+                      <label for="codCliente">Cliente *</label>
+                      <p-dropdown 
+                          id="codCliente"
+                          [(ngModel)]="mantenimientoForm.cod_cliente"
+                          [options]="clienteOptions"
+                          placeholder="Seleccionar cliente"
+                          [ngClass]="{'ng-invalid ng-dirty' : !mantenimientoForm.cod_cliente}"
+                          (onChange)="onClienteChange($event)">
+                      </p-dropdown>
+                      <small class="ng-dirty ng-invalid" *ngIf="!mantenimientoForm.cod_cliente">
+                          Cliente es requerido.
+                      </small>
+                  </div>
+
+                  <div class="field">
+                      <label for="dispositivo">Dispositivo *</label>
+                      <p-dropdown
+                          id="dispositivo"
+                          [(ngModel)]="dispositivoSeleccionado"
+                          [options]="dispositivosCliente"
+                          optionLabel="displayName"
+                          [filter]="true" filterBy="displayName"
+                          [disabled]="!mantenimientoForm.cod_cliente"
+                          placeholder="Seleccione un dispositivo"
+                          [ngClass]="{'ng-invalid ng-dirty' : !dispositivoSeleccionado}">
+                      </p-dropdown>
+                      <small class="ng-dirty ng-invalid" *ngIf="!dispositivoSeleccionado">
+                          Dispositivo es requerido.
+                      </small>
+                  </div>
+
+                  <div class="field">
+                      <label for="descripcion">Descripción del Mantenimiento *</label>
+                      <textarea 
+                          id="descripcion"
+                          pInputTextarea 
+                          [(ngModel)]="mantenimientoForm.descripcion"
+                          [rows]="3" 
+                          [cols]="30"
+                          placeholder="Describa el trabajo realizado en el mantenimiento..."
+                          [ngClass]="{'ng-invalid ng-dirty' : !mantenimientoForm.descripcion.trim()}">
+                      </textarea>
+                      <small class="ng-dirty ng-invalid" *ngIf="!mantenimientoForm.descripcion.trim()">
+                          La descripción es requerida.
+                      </small>
+                  </div>
+
+                  <div class="formgrid grid">
+                      <div class="field col">
+                          <label for="frecuencia">Frecuencia *</label>
+                          <p-dropdown
+                              id="frecuencia"
+                              [(ngModel)]="mantenimientoForm.frecuencia"
+                              [options]="frecuenciaOptions"
+                              placeholder="Seleccionar frecuencia"
+                              (onChange)="onFrecuenciaChange()"
+                              [ngClass]="{'ng-invalid ng-dirty' : !mantenimientoForm.frecuencia}">
+                          </p-dropdown>
+                          <small class="ng-dirty ng-invalid" *ngIf="!mantenimientoForm.frecuencia">
+                              Frecuencia es requerida.
+                          </small>
+                      </div>
+
+                      <div class="field col">
+                          <label for="fechaMantenimiento">Fecha de Mantenimiento *</label>
+                          <p-calendar
+                              id="fechaMantenimiento"
+                              [(ngModel)]="mantenimientoForm.fecha_mantenimiento"
+                              dateFormat="yy-mm-dd"
+                              (onSelect)="onFechaMantenimientoChange()"
+                              [showIcon]="true"
+                              [ngClass]="{'ng-invalid ng-dirty' : !mantenimientoForm.fecha_mantenimiento}">
+                          </p-calendar>
+                          <small class="ng-dirty ng-invalid" *ngIf="!mantenimientoForm.fecha_mantenimiento">
+                              Fecha de mantenimiento es requerida.
+                          </small>
+                      </div>
+                  </div>
+
+                  <div class="formgrid grid">
+                      <div class="field col">
+                          <label for="ingreso">Ingreso (S/.)</label>
+                          <input 
+                              type="number" 
+                              pInputText 
+                              id="ingreso" 
+                              [(ngModel)]="mantenimientoForm.ingreso"
+                              step="0.01"
+                              min="0">
+                      </div>
+
+                      <div class="field col">
+                          <label for="egreso">Egreso (S/.)</label>
+                          <input 
+                              type="number" 
+                              pInputText 
+                              id="egreso" 
+                              [(ngModel)]="mantenimientoForm.egreso"
+                              step="0.01"
+                              min="0">
+                      </div>
+                  </div>
+
+                  <div class="field">
+                      <label for="proxFecha">Próxima Fecha</label>
+                      <p-calendar
+                          id="proxFecha"
+                          [(ngModel)]="mantenimientoForm.prox_fecha"
+                          dateFormat="yy-mm-dd"
+                          [showIcon]="true"
+                          [disabled]="true">
+                      </p-calendar>
+                  </div>
+              </ng-template>
+
+              <ng-template pTemplate="footer">
+                  <button 
+                      pButton 
+                      pRipple 
+                      label="Cancelar" 
+                      icon="pi pi-times" 
+                      class="p-button-text" 
+                      (click)="hideDialog()">
+                  </button>
+                  <button 
+                      pButton 
+                      pRipple 
+                      [label]="editMode ? 'Guardar Cambios' : 'Guardar'" 
+                      icon="pi pi-check" 
+                      class="p-button-text" 
+                      (click)="saveMantenimiento()">
+                  </button>
+              </ng-template>
+          </p-dialog>
+
+          <p-confirmDialog [style]="{width: '425px'}"></p-confirmDialog>
+      </div>
   </div>
-
-  <p-table 
-    #dt 
-    [value]="mantenimientos" 
-    [rows]="10" 
-    [paginator]="true"
-    [globalFilterFields]="['nombre_cliente','equipos','frecuencia']"
-    [loading]="loading"
-    responsiveLayout="scroll">
-    <ng-template pTemplate="header">
-      <tr>
-        <th>Cliente</th>
-        <th>Fecha Mantenimiento</th>
-        <th>Descripción</th>
-        <th>Ingreso</th>
-        <th>Egreso</th>
-        <th>Frecuencia</th>
-        <th>Próxima Fecha</th>
-        <th>Acciones</th>
-      </tr>
-    </ng-template>
-    <ng-template pTemplate="body" let-mantenimiento>
-      <tr>
-        <td>{{mantenimiento.nombre_cliente}}</td>
-        <td>{{mantenimiento.fecha | date:'dd/MM/yyyy'}}</td>
-        <td>{{mantenimiento.equipos}}</td>
-        <td>{{mantenimiento.ingreso | number}}</td>
-        <td>{{mantenimiento.egreso | number}}</td>
-        <td>{{mantenimiento.frecuencia}}</td>
-        <td>{{mantenimiento.prox_mantenimiento | date:'dd/MM/yyyy'}}</td>
-        <td>
-          <button 
-            pButton 
-            pRipple 
-            icon="pi pi-pencil" 
-            class="p-button-rounded p-button-success mr-2" 
-            (click)="editMantenimiento(mantenimiento)"
-            pTooltip="Editar">
-          </button>
-          <button 
-            pButton 
-            pRipple 
-            icon="pi pi-trash" 
-            class="p-button-rounded p-button-warning" 
-            (click)="deleteMantenimiento(mantenimiento)"
-            pTooltip="Eliminar">
-          </button>
-        </td>
-      </tr>
-    </ng-template>
-  </p-table>
-  <p-confirmDialog [style]="{width: '425px'}"></p-confirmDialog>
 </div>
-
-<!-- Dialog y toast se mantienen igual -->
-
