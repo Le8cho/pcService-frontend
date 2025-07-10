@@ -64,10 +64,6 @@
               
               <ng-template pTemplate="header">
                   <tr>
-                      <th pSortableColumn="mantPrev">
-                          #MantPrev 
-                          <p-sortIcon field="mantPrev"></p-sortIcon>
-                      </th>
                       <th pSortableColumn="cod_cliente">
                           Cod_Cliente 
                           <p-sortIcon field="cod_cliente"></p-sortIcon>
@@ -103,19 +99,12 @@
               <ng-template pTemplate="body" let-mantenimiento>
                   <tr>
                       <td>
-                          <span class="p-column-title">#MantPrev</span>
-                          {{mantenimiento.mantPrev}}
+                          {{mantenimiento.nombre_cliente}}
                       </td>
                       <td>
-                          <span class="p-column-title">Cod_Cliente</span>
-                          {{mantenimiento.cod_cliente}}
-                      </td>
-                      <td>
-                          <span class="p-column-title">Fecha Mantenimiento</span>
                           {{mantenimiento.fecha | date:'dd/MM/yyyy'}}
                       </td>
                       <td>
-                          <span class="p-column-title">Equipos</span>
                           {{mantenimiento.equipos}}
                       </td>
                       <td>
@@ -125,11 +114,9 @@
                           {{mantenimiento.egreso | number}}
                       </td>
                       <td>
-                          <span class="p-column-title">Frecuencia</span>
                           {{mantenimiento.frecuencia}}
                       </td>
                       <td>
-                          <span class="p-column-title">Próxima Fecha</span>
                           {{mantenimiento.prox_mantenimiento | date:'dd/MM/yyyy'}}
                       </td>
                       <td>
