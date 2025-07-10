@@ -272,31 +272,28 @@ export class MantenimientoService {
   createMantenimiento(mantenimiento: any): Observable<any> {
     const payload = {
       id_cliente: mantenimiento.id_cliente,
-      descripcion: mantenimiento.equipos || mantenimiento.descripcion,
+      descripcion: mantenimiento.descripcion,
       frecuencia: mantenimiento.frecuencia,
-      prox_mantenimiento: mantenimiento.prox_fecha ? 
-        this.formatDateForBackend(mantenimiento.prox_fecha) : null,
+      prox_mantenimiento: mantenimiento.prox_mantenimiento,
       tipo_mantenimiento: mantenimiento.tipo_mantenimiento || 'PREVENTIVO',
       ingreso: mantenimiento.ingreso || null,
       egreso: mantenimiento.egreso || null,
-      fecha: mantenimiento.fecha_mantenimiento ? 
-        this.formatDateForBackend(mantenimiento.fecha_mantenimiento) : null
+      fecha: mantenimiento.fecha,
+      id_dispositivo: mantenimiento.id_dispositivo // <-- AGREGADO
     };
     return this.apiService.post<any>('/mantenimientos', payload);
   }
 
-
   updateMantenimiento(id: number, mantenimiento: any): Observable<any> {
     const payload = {
-      descripcion: mantenimiento.equipos || mantenimiento.descripcion,
+      descripcion: mantenimiento.descripcion,
       frecuencia: mantenimiento.frecuencia,
-      prox_mantenimiento: mantenimiento.prox_fecha ? 
-        this.formatDateForBackend(mantenimiento.prox_fecha) : null,
+      prox_mantenimiento: mantenimiento.prox_mantenimiento,
       tipo_mantenimiento: mantenimiento.tipo_mantenimiento || 'PREVENTIVO',
       ingreso: mantenimiento.ingreso || null,
       egreso: mantenimiento.egreso || null,
-      fecha: mantenimiento.fecha_mantenimiento ? 
-        this.formatDateForBackend(mantenimiento.fecha_mantenimiento) : null
+      fecha: mantenimiento.fecha,
+      id_dispositivo: mantenimiento.id_dispositivo // <-- AGREGADO
     };
     return this.apiService.put<any>(`/mantenimientos/${id}`, payload);
   }

@@ -14,6 +14,7 @@ import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputTextModule } from 'primeng/inputtext';
+import { InputTextarea } from 'primeng/inputtextarea';
 import { ToolbarModule } from 'primeng/toolbar';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { TooltipModule } from 'primeng/tooltip';
@@ -36,6 +37,7 @@ import { MantenimientoService } from '../ServiciosSIST/api.service';
         ButtonModule,
         DropdownModule,
         InputTextModule,
+        InputTextarea,
         ToolbarModule,
         ConfirmDialogModule,
         TooltipModule,
@@ -130,6 +132,7 @@ export class GestionDatosMantenimientoComponent implements OnInit {
         this.clienteSeleccionado = null;
         this.dispositivoSeleccionado = null;
         this.dispositivosCliente = [];
+        this.calcularProximaFecha();
     }
 
     onClienteChange(event: any) {
@@ -175,7 +178,8 @@ export class GestionDatosMantenimientoComponent implements OnInit {
             ingreso: mantenimiento.ingreso || 0,
             egreso: mantenimiento.egreso || 0,
             frecuencia: mantenimiento.frecuencia || '',
-            prox_fecha: new Date(mantenimiento.prox_mantenimiento || '')
+            prox_fecha: new Date(mantenimiento.prox_mantenimiento || ''),
+            descripcion: mantenimiento.descripcion || ''
         };
 
         // Trigger onClienteChange to load devices for the selected client
@@ -195,6 +199,7 @@ export class GestionDatosMantenimientoComponent implements OnInit {
                 }
             }, 100); // Small delay to ensure options are populated
         }
+        this.calcularProximaFecha();
         this.mantenimientoDialog = true;
     }
 
@@ -235,15 +240,29 @@ export class GestionDatosMantenimientoComponent implements OnInit {
             // Set equipos from selected device's displayName before creating formData
             this.mantenimientoForm.equipos = this.dispositivoSeleccionado ? this.dispositivoSeleccionado.displayName : '';
 
-            const formData = {
+            // Deshabilitar el botón de guardar para evitar envíos dobles
+            this.loading = true;
+
+            // Construir el payload sin campos undefined o vacíos
+            const formData: any = {
                 id_cliente: this.mantenimientoForm.cod_cliente,
-                equipos: this.mantenimientoForm.equipos, // Send the descriptive string
+                descripcion: this.mantenimientoForm.descripcion,
                 frecuencia: this.mantenimientoForm.frecuencia,
-                fecha_mantenimiento: this.mantenimientoForm.fecha_mantenimiento,
-                prox_fecha: this.mantenimientoForm.prox_fecha,
+                fecha: this.mantenimientoForm.fecha_mantenimiento?.toISOString().split('T')[0], // Formato YYYY-MM-DD
+                prox_mantenimiento: this.mantenimientoForm.prox_fecha?.toISOString().split('T')[0], // Formato YYYY-MM-DD
+                tipo_mantenimiento: 'PREVENTIVO', // Por defecto
                 ingreso: this.mantenimientoForm.ingreso,
                 egreso: this.mantenimientoForm.egreso
             };
+            if (this.dispositivoSeleccionado && this.dispositivoSeleccionado.id_dispositivo) {
+                formData.id_dispositivo = this.dispositivoSeleccionado.id_dispositivo;
+            }
+            // Eliminar campos nulos, undefined o vacíos
+            Object.keys(formData).forEach(key => {
+                if (formData[key] === undefined || formData[key] === null || formData[key] === '') {
+                    delete formData[key];
+                }
+            });
 
             if (this.editMode && this.selectedMantenimiento) {
                 // Actualizar mantenimiento existente
@@ -257,6 +276,7 @@ export class GestionDatosMantenimientoComponent implements OnInit {
                         });
                         this.hideDialog();
                         this.loadMantenimientos(); // Recargar la lista
+                        this.loading = false;
                     },
                     error: (error) => {
                         console.error('Error al actualizar:', error);
@@ -266,6 +286,7 @@ export class GestionDatosMantenimientoComponent implements OnInit {
                             detail: 'No se pudo actualizar el mantenimiento',
                             life: 3000
                         });
+                        this.loading = false;
                     }
                 });
             } else {
@@ -280,6 +301,7 @@ export class GestionDatosMantenimientoComponent implements OnInit {
                         });
                         this.hideDialog();
                         this.loadMantenimientos(); // Recargar la lista
+                        this.loading = false;
                     },
                     error: (error) => {
                         console.error('Error al crear:', error);
@@ -289,6 +311,7 @@ export class GestionDatosMantenimientoComponent implements OnInit {
                             detail: 'No se pudo crear el mantenimiento',
                             life: 3000
                         });
+                        this.loading = false;
                     }
                 });
             }
@@ -297,7 +320,7 @@ export class GestionDatosMantenimientoComponent implements OnInit {
 
     validateForm(): boolean {
         if (!this.mantenimientoForm.cod_cliente || !this.dispositivoSeleccionado || 
-            !this.mantenimientoForm.frecuencia) {
+            !this.mantenimientoForm.frecuencia || !this.mantenimientoForm.descripcion.trim()) {
             this.messageService.add({
                 severity: 'error',
                 summary: 'Error',
@@ -328,7 +351,8 @@ export class GestionDatosMantenimientoComponent implements OnInit {
             ingreso: 0,
             egreso: 0,
             frecuencia: '',
-            prox_fecha: new Date()
+            prox_fecha: new Date(),
+            descripcion: ''
         };
     }
 
@@ -366,6 +390,38 @@ export class GestionDatosMantenimientoComponent implements OnInit {
     getClienteNameById(clienteId: number): string {
         const cliente = this.clientes.find(c => c.id_cliente === clienteId);
         return cliente ? `${cliente.nombre} ${cliente.apellido}` : '';
+    }
+
+    // Método para calcular la próxima fecha según la frecuencia
+    calcularProximaFecha() {
+        const fechaBase = this.mantenimientoForm.fecha_mantenimiento;
+        let nuevaFecha = new Date(fechaBase);
+        switch (this.mantenimientoForm.frecuencia) {
+            case 'Mensual':
+                nuevaFecha.setMonth(nuevaFecha.getMonth() + 1);
+                break;
+            case 'Bimestral':
+                nuevaFecha.setMonth(nuevaFecha.getMonth() + 2);
+                break;
+            case 'Trimestral':
+                nuevaFecha.setMonth(nuevaFecha.getMonth() + 3);
+                break;
+            case 'Semestral':
+                nuevaFecha.setMonth(nuevaFecha.getMonth() + 6);
+                break;
+            case 'Anual':
+                nuevaFecha.setFullYear(nuevaFecha.getFullYear() + 1);
+                break;
+        }
+        this.mantenimientoForm.prox_fecha = nuevaFecha;
+    }
+
+    // Llamar al calcularProximaFecha cuando cambia la frecuencia o la fecha de mantenimiento
+    onFrecuenciaChange() {
+        this.calcularProximaFecha();
+    }
+    onFechaMantenimientoChange() {
+        this.calcularProximaFecha();
     }
 }   
 
