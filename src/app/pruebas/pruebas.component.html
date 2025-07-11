@@ -1,0 +1,42 @@
+<app-kpi-cards
+  [clientesMes]="clientesMes"
+  [operacionesMes]="operacionesMes"
+  [gananciaMes]="gananciaMes"
+  [gananciaPorcentaje]="gananciaPorcentaje"
+  [mantenimientosMes]="mantenimientosMes"
+></app-kpi-cards>
+
+<div class="card p-6 mb-8 mt-8">
+  <h3 class="text-lg font-bold mb-4">Ganancia por Tipo de Operación y Mes (Últimos 12 meses)</h3>
+  <div *ngIf="pivotGanancia.length > 0; else loadingPivot">
+    <table class="table-auto w-full mb-2">
+      <thead>
+        <tr>
+          <th class="px-4 py-2">Año</th>
+          <th class="px-4 py-2">Mes</th>
+          <th *ngFor="let col of columnasPivot" class="px-4 py-2">{{ col }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let fila of pivotGanancia">
+          <td class="px-4 py-2">{{ fila.anio }}</td>
+          <td class="px-4 py-2">{{ fila.mes }}</td>
+          <td *ngFor="let col of columnasPivot" class="px-4 py-2">{{ fila[col.toLowerCase()] ?? 0 }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <ng-template #loadingPivot>
+    <div style="height: 350px; background: #f3f4f6; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+      <span class="text-gray-400">[Cargando tabla cruzada de tipo de operación vs ganancia por mes...]</span>
+    </div>
+  </ng-template>
+</div>
+
+<app-dw-revenue-stream-widget></app-dw-revenue-stream-widget>
+
+<div class="grid grid-cols-12 gap-6 mt-8">
+  <div class="col-span-12 md:col-span-6">
+    <app-best-products [bestProducts]="bestProducts"></app-best-products>
+  </div>
+</div>
