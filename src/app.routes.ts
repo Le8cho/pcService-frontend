@@ -6,6 +6,7 @@ import { Landing } from './app/pages/landing/landing';
 import { Notfound } from './app/pages/notfound/notfound';
 import { GestionDatosLicenciasComponent } from './app/gestion-datos-licencias/gestion-datos-licencias.component';
 import { GestionDatosDispositivosComponent } from './app/gestion-datos-dispositivos/gestion-datos-dispositivos.component';
+import { EstadisticoComponent } from './app/estadistico/estadistico.component';
 
 import { LoginComponent } from './app/login/login.component';
 
@@ -21,7 +22,8 @@ export const appRoutes: Routes = [
         path: '',
         component: AppLayout,
         children: [
-            { path: '', component: Dashboard },
+            { path: '', component: EstadisticoComponent },
+            { path: 'dashboard', component: Dashboard },
             { path: 'clientes', component: GestionDatosClientesComponent },
             { path: 'uikit', loadChildren: () => import('./app/pages/uikit/uikit.routes') },
             { path: 'documentation', component: Documentation },
@@ -31,6 +33,7 @@ export const appRoutes: Routes = [
             { path: 'gestion-datos-dispositivos', component: GestionDatosDispositivosComponent },
             { path: 'gestion-servicios', component: GestionDatosServiciosComponent },
             { path: 'gestion-mantenimientos', component: GestionDatosMantenimientoComponent },
+            { path: 'estadistico', component: EstadisticoComponent },
   
         ]
     },
