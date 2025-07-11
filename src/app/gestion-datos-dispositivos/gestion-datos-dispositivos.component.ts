@@ -42,8 +42,19 @@ export class GestionDatosDispositivosComponent implements OnInit {
   editandoDispositivo = false;
   dispositivoSeleccionado: any = {};
   clienteOptions: any[] = []; // Opciones para el dropdown de clientes
+  clienteMap: Map<number, string> = new Map(); // Mapa para ID -> Nombre del Cliente
   searchTerm: string = '';
   loading: boolean = false;
+
+  // --- NUEVO: Filtros ---
+  filtroTipo: string = '';
+  filtroMarca: string = '';
+  filtroCliente: number | null = null;
+  ordenClientesDesc: boolean = true;
+
+  tipoDispositivoOptions: any[] = [];
+  marcaOptions: any[] = [];
+  clientesOrdenadosOptions: any[] = [];
 
   constructor(
     private apiService: ApiService,
@@ -52,17 +63,26 @@ export class GestionDatosDispositivosComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.cargarDispositivos();
     this.loadClientes();
+    // Los tipos/marcas/filtros se llenan luego de cargar dispositivos
   }
 
   loadClientes() {
     this.apiService.verClienteDispositivos().subscribe({
       next: (data) => {
+        // Opciones para el dropdown
         this.clienteOptions = data.map(cliente => ({
-          label: `${cliente.nombre} ${cliente.apellido} (ID: ${cliente.id_cliente})`,
+          label: `${cliente.nombre} ${cliente.apellido}`,
           value: cliente.id_cliente
         }));
+
+        // Llenado del mapa de IDs a nombres
+        data.forEach(cliente => {
+          this.clienteMap.set(cliente.id_cliente, `${cliente.nombre} ${cliente.apellido}`);
+        });
+
+        // Cargar dispositivos después de cargar clientes
+        this.cargarDispositivos();
       },
       error: (error) => {
         console.error('Error al cargar clientes:', error);
@@ -80,8 +100,15 @@ export class GestionDatosDispositivosComponent implements OnInit {
     this.loading = true;
     this.apiService.getDispositivos().subscribe({
       next: (data) => {
-        this.dispositivosOriginales = data;
-        this.dispositivos = data;
+        // Guardado de datos originales con nombres de clientes
+        this.dispositivosOriginales = data.map(dispositivo => ({
+          ...dispositivo,
+          NOMBRE_CLIENTE: this.clienteMap.get(dispositivo.ID_CLIENTE) || `ID: ${dispositivo.ID_CLIENTE}`
+        }));
+
+        // Los datos mostrados son iguales a los originales al cargar
+        this.dispositivos = [...this.dispositivosOriginales];
+        this.prepararFiltros();
         this.loading = false;
       },
       error: (error) => {
@@ -97,6 +124,90 @@ export class GestionDatosDispositivosComponent implements OnInit {
     });
   }
 
+  // --- FILTROS Y ORDENAMIENTO ---
+  prepararFiltros() {
+    // Tipos de dispositivos
+    const tiposSet = new Set(this.dispositivosOriginales.map(d => d.TIPO_DISPOSITIVO).filter(Boolean));
+    this.tipoDispositivoOptions = Array.from(tiposSet).map(tipo => ({ label: tipo, value: tipo }));
+
+    // Marcas
+    const marcasSet = new Set(this.dispositivosOriginales.map(d => d.MARCA).filter(Boolean));
+    this.marcaOptions = Array.from(marcasSet).map(marca => ({ label: marca, value: marca }));
+
+    // Clientes con cantidad de dispositivos
+    const clienteContador: { [key: number]: number } = {};
+    this.dispositivosOriginales.forEach(d => {
+      clienteContador[d.ID_CLIENTE] = (clienteContador[d.ID_CLIENTE] || 0) + 1;
+    });
+
+    let clientesArray = Object.keys(clienteContador).map(id => ({
+      label: this.clienteMap.get(Number(id)) || `ID: ${id}`,
+      value: Number(id),
+      cantidad: clienteContador[Number(id)]
+    }));
+
+    clientesArray.sort((a, b) =>
+      this.ordenClientesDesc
+        ? b.cantidad - a.cantidad
+        : a.cantidad - b.cantidad
+    );
+    this.clientesOrdenadosOptions = clientesArray;
+  }
+
+  toggleOrdenCliente() {
+    this.ordenClientesDesc = !this.ordenClientesDesc;
+    this.prepararFiltros();
+    this.filtrarDispositivos();
+  }
+
+  filtrarDispositivos() {
+    let filtrados = [...this.dispositivosOriginales];
+
+    // Filtro tipo
+    if (this.filtroTipo) {
+      filtrados = filtrados.filter(d => d.TIPO_DISPOSITIVO === this.filtroTipo);
+    }
+    // Filtro marca
+    if (this.filtroMarca) {
+      filtrados = filtrados.filter(d => d.MARCA === this.filtroMarca);
+    }
+    // Filtro cliente
+    if (this.filtroCliente) {
+      filtrados = filtrados.filter(d => d.ID_CLIENTE === this.filtroCliente);
+    }
+
+    // Búsqueda textual (por término)
+    if (this.searchTerm && this.searchTerm.trim()) {
+      const term = this.searchTerm.toLowerCase().trim();
+      filtrados = filtrados.filter(dispositivo => {
+        const nombreCliente = (this.clienteMap.get(dispositivo.ID_CLIENTE) || '').toLowerCase();
+        return [
+          dispositivo.ID_DISPOSITIVO?.toString().toLowerCase(),
+          dispositivo.TIPO_DISPOSITIVO?.toLowerCase(),
+          dispositivo.MARCA?.toLowerCase(),
+          dispositivo.MODELO?.toLowerCase(),
+          nombreCliente
+        ].some(field => field.includes(term));
+      });
+    }
+    this.dispositivos = filtrados;
+  }
+
+  limpiarFiltros() {
+    this.filtroTipo = '';
+    this.filtroMarca = '';
+    this.filtroCliente = null;
+    this.ordenClientesDesc = true;
+    this.prepararFiltros();
+    this.filtrarDispositivos();
+  }
+
+  clearSearch() {
+    this.searchTerm = '';
+    this.filtrarDispositivos();
+  }
+
+  // --- CRUD y Diálogo ---
   abrirDialogoDispositivo() {
     this.editandoDispositivo = false;
     this.dispositivoSeleccionado = {};
@@ -170,9 +281,9 @@ export class GestionDatosDispositivosComponent implements OnInit {
   }
 
   validateForm(): boolean {
-    if (!this.dispositivoSeleccionado.ID_CLIENTE || 
-        !this.dispositivoSeleccionado.TIPO_DISPOSITIVO || 
-        !this.dispositivoSeleccionado.MARCA || 
+    if (!this.dispositivoSeleccionado.ID_CLIENTE ||
+        !this.dispositivoSeleccionado.TIPO_DISPOSITIVO ||
+        !this.dispositivoSeleccionado.MARCA ||
         !this.dispositivoSeleccionado.MODELO) {
       this.messageService.add({
         severity: 'warn',
@@ -183,29 +294,6 @@ export class GestionDatosDispositivosComponent implements OnInit {
       return false;
     }
     return true;
-  }
-
-  searchDispositivos() {
-    if (!this.searchTerm.trim()) {
-      this.cargarDispositivos();
-      return;
-    }
-    this.loading = true;
-    this.apiService.searchDispositivos(this.searchTerm).subscribe({
-      next: data => {
-        this.dispositivos = data;
-        this.loading = false;
-      },
-      error: err => {
-        this.loading = false;
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error en la búsqueda' });
-      }
-    });
-  }
-
-  clearSearch() {
-    this.searchTerm = '';
-    this.cargarDispositivos();
   }
 
   cerrarDialogoDispositivo() {

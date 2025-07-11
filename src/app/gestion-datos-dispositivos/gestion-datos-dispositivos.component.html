@@ -18,32 +18,65 @@
                 </ng-template>
             </p-toolbar>
 
-            <div class="mb-4">
-                <div class="p-inputgroup">
+            <!-- Búsqueda a la izquierda y filtros a la derecha -->
+            <div class="barra-busqueda-filtros d-flex align-items-end justify-content-between flex-wrap" style="gap: 0.75rem;">
+                <!-- Izquierda: Barra de búsqueda -->
+                <div class="p-inputgroup-barrabusqueda">
+                  <div class="p-inputgroup">
                     <input 
-                        type="text" 
-                        pInputText 
-                        placeholder="Buscar por ..." 
-                        [(ngModel)]="searchTerm"
-                        (input)="searchDispositivos()"
-                        style="width: 300px;">
+                      type="text" 
+                      pInputText 
+                      placeholder="Buscar por ..." 
+                      [(ngModel)]="searchTerm"
+                      (input)="filtrarDispositivos()"
+                      style="width: 300px;">
+                      <button 
+                          pButton 
+                          pRipple 
+                          type="button" 
+                          icon="pi pi-search" 
+                          class="p-button-primary"
+                          label="BUSCAR"
+                          (click)="filtrarDispositivos()">
+                      </button>
+                      <button 
+                          pButton 
+                          pRipple 
+                          type="button" 
+                          icon="pi pi-times" 
+                          class="p-button-secondary"
+                          (click)="clearSearch(); filtrarDispositivos()"
+                          *ngIf="searchTerm">
+                      </button>
+                  </div>
+                </div>
+                <!-- Derecha: Filtros -->
+                <div class="p-inputgroup-filtros">
+                    <p-dropdown 
+                        [options]="tipoDispositivoOptions"
+                        [(ngModel)]="filtroTipo"
+                        placeholder="Tipo de dispositivo"
+                        (onChange)="filtrarDispositivos()"
+                        [style]="{'min-width':'160px'}"></p-dropdown>
+                    <p-dropdown 
+                        [options]="marcaOptions"
+                        [(ngModel)]="filtroMarca"
+                        placeholder="Marca"
+                        (onChange)="filtrarDispositivos()"
+                        [style]="{'min-width':'120px'}"></p-dropdown>
+                    <p-dropdown 
+                        [options]="clientesOrdenadosOptions"
+                        [(ngModel)]="filtroCliente"
+                        placeholder="Cliente"
+                        (onChange)="filtrarDispositivos()"
+                        [style]="{'min-width':'180px'}"></p-dropdown>
                     <button 
-                        pButton 
-                        pRipple 
-                        type="button" 
-                        icon="pi pi-search" 
-                        class="p-button-primary"
-                        label="BUSCAR"
-                        (click)="searchDispositivos()">
-                    </button>
-                    <button 
-                        pButton 
-                        pRipple 
-                        type="button" 
-                        icon="pi pi-times" 
+                        pButton
+                        icon="pi pi-filter-slash"
                         class="p-button-secondary"
-                        (click)="clearSearch()"
-                        *ngIf="searchTerm">
+                        (click)="limpiarFiltros()"
+                        label="Limpiar filtros"
+                        style="margin-left: 8px">
                     </button>
                 </div>
             </div>
@@ -123,40 +156,48 @@
 <p-dialog header="{{editandoDispositivo ? 'Editar' : 'Registrar'}} Dispositivo" [(visible)]="mostrarDialogoDispositivo" [modal]="true" [style]="{width: '400px'}">
   <div class="p-fluid">
     <div class="p-field">
-      <label for="idCliente">Cliente *</label>
-      <p-dropdown 
-        id="idCliente"
-        [(ngModel)]="dispositivoSeleccionado.ID_CLIENTE"
-        [options]="clienteOptions"
-        placeholder="Seleccionar un cliente"
-        [filter]="true" 
-        filterBy="label"
-        [ngClass]="{'ng-invalid ng-dirty' : !dispositivoSeleccionado.ID_CLIENTE}">
-      </p-dropdown>
+      <div class="input-div">
+        <label for="idCliente">Cliente *</label>
+        <p-dropdown 
+          id="idCliente"
+          [(ngModel)]="dispositivoSeleccionado.ID_CLIENTE"
+          [options]="clienteOptions"
+          placeholder="Seleccionar un cliente"
+          [filter]="true" 
+          filterBy="label"
+          [ngClass]="{'ng-invalid ng-dirty' : !dispositivoSeleccionado.ID_CLIENTE}">
+          </p-dropdown>
+      </div>
       <small class="ng-dirty ng-invalid" *ngIf="!dispositivoSeleccionado.ID_CLIENTE">
         El cliente es requerido.
       </small>
     </div>
     <div class="p-field">
-      <label for="tipo">Tipo de Dispositivo *</label>
-      <input id="tipo" type="text" pInputText [(ngModel)]="dispositivoSeleccionado.TIPO_DISPOSITIVO" 
-        [ngClass]="{'ng-invalid ng-dirty' : !dispositivoSeleccionado.TIPO_DISPOSITIVO}" />
+      <div class="input-div">
+        <label for="tipo">Tipo de Dispositivo *</label>
+        <input id="tipo" type="text" pInputText [(ngModel)]="dispositivoSeleccionado.TIPO_DISPOSITIVO" 
+          [ngClass]="{'ng-invalid ng-dirty' : !dispositivoSeleccionado.TIPO_DISPOSITIVO}" />
+      </div>
       <small class="ng-dirty ng-invalid" *ngIf="!dispositivoSeleccionado.TIPO_DISPOSITIVO">
         El tipo de dispositivo es requerido.
       </small>
     </div>
     <div class="p-field">
-      <label for="marca">Marca *</label>
-      <input id="marca" type="text" pInputText [(ngModel)]="dispositivoSeleccionado.MARCA" 
-        [ngClass]="{'ng-invalid ng-dirty' : !dispositivoSeleccionado.MARCA}" />
+      <div class="input-div">
+        <label for="marca">Marca *</label>
+        <input id="marca" type="text" pInputText [(ngModel)]="dispositivoSeleccionado.MARCA" 
+          [ngClass]="{'ng-invalid ng-dirty' : !dispositivoSeleccionado.MARCA}" />
+      </div>
       <small class="ng-dirty ng-invalid" *ngIf="!dispositivoSeleccionado.MARCA">
         La marca es requerida.
       </small>
     </div>
     <div class="p-field">
-      <label for="modelo">Modelo *</label>
-      <input id="modelo" type="text" pInputText [(ngModel)]="dispositivoSeleccionado.MODELO" 
-        [ngClass]="{'ng-invalid ng-dirty' : !dispositivoSeleccionado.MODELO}" />
+      <div class="input-div">
+        <label for="modelo">Modelo *</label>
+        <input id="modelo" type="text" pInputText [(ngModel)]="dispositivoSeleccionado.MODELO" 
+          [ngClass]="{'ng-invalid ng-dirty' : !dispositivoSeleccionado.MODELO}" />
+      </div>
       <small class="ng-dirty ng-invalid" *ngIf="!dispositivoSeleccionado.MODELO">
         El modelo es requerido.
       </small>
