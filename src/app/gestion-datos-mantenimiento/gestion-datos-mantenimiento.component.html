@@ -73,8 +73,12 @@
                           <p-sortIcon field="fecha"></p-sortIcon>
                       </th>
                       <th pSortableColumn="equipos">
-                          Equipos 
+                          Descripción 
                           <p-sortIcon field="equipos"></p-sortIcon>
+                      </th>
+                      <th pSortableColumn="equipo_asociado">
+                          Equipo
+                          <p-sortIcon field="equipo_asociado"></p-sortIcon>
                       </th>
                       <th pSortableColumn="ingreso">
                           Ingreso 
@@ -106,6 +110,9 @@
                       </td>
                       <td>
                           {{mantenimiento.equipos}}
+                      </td>
+                      <td>
+                          {{mantenimiento.equipo_asociado}}
                       </td>
                       <td>
                           {{mantenimiento.ingreso | number}}
