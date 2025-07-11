@@ -46,9 +46,11 @@ export class PruebasComponent implements OnInit {
     this.http.get<any>('https://gb77f1bf3fd1479-pcservicedwh.adb.sa-santiago-1.oraclecloudapps.com/ords/pcserviceuser/api_kpi/best_products')
       .subscribe(resp => {
         const colores = ['#ff9800', '#00bcd4', '#9c27b0', '#4caf50', '#e91e63'];
-        this.bestProducts = (resp.items || []).map((item: any, i: number) => ({
+        const items = resp.items || [];
+        const total = items.reduce((sum: number, item: any) => sum + (item.cantidad ?? 0), 0);
+        this.bestProducts = items.map((item: any, i: number) => ({
           nombre: item.tipo_licencia,
-          porcentaje: item.cantidad,
+          porcentaje: total > 0 ? Math.round((item.cantidad / total) * 100) : 0,
           color: colores[i % colores.length]
         }));
       });
