@@ -181,6 +181,41 @@ Servicios de Gestión de Datos Login
   enviarAlertaManual(idLicencia: string): Observable<any> {
     return this.http.post(`${this.apiUrl}/licencias/enviar-alerta/${idLicencia}`, {});
   }
+
+  // Obtener estadísticas del mes
+  getEstadisticasMes(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/estadisticas/mes`);
+  }
+
+  // Top clientes con más gasto este mes
+  getTopClientesGastoMes(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/clientes/top-gasto-mes`);
+  }
+
+  // Ingresos de los últimos 4 meses por tipo de operación
+  getIngresosUltimos4Meses(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/ingresos/ultimos-4-meses`);
+  }
+
+  // Porcentaje de ventas de licencias este mes
+  getPorcentajeVentasLicenciasMes(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/licencias/porcentaje-ventas-mes`);
+  }
+
+  // Notificaciones de licencias y mantenimientos próximos a vencer esta semana
+  getNotificacionesVencimientosSemana(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/notificaciones/vencimientos-semana`);
+  }
+
+  // Diferencia de ganancia con el mes anterior
+  getGananciaMesVsAnterior(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/ganancia/mes-vs-anterior`);
+  }
+
+  // Número de mantenimientos hechos en el mes actual
+  getMantenimientosMes(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/mantenimientos/mes`);
+  }
 }
 
 
