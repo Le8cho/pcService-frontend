@@ -1,10 +1,10 @@
 <div class="grid">
     <div class="col-12">
-        <div class="card px-6 py-6">
-            <h3>Gestión de Datos de Licencias de Software</h3>
+        <div class="card px-8 py-8">
+            <h3 class="mb-4">Gestión de Datos de Licencias de Software</h3>
             
             <!-- SELECCIÓN PRINCIPAL-->
-            <div class="flex justify-content-center gap-3 mb-4">
+            <div class="flex justify-content-center gap-4 mb-6">
                 <button 
                     pButton 
                     pRipple 
@@ -35,10 +35,10 @@
                     (click)="seleccionarTipoLicencia('sistema_operativo')">
                 </button>
             </div>
-            <div style="height: 1.5rem;"></div>
+            <div style="height: 2rem;"></div>
 
             <!-- BOTONES DE ACCIÓN -->
-            <div class="flex flex-wrap gap-2 mb-4">
+            <div class="flex flex-wrap gap-3 mb-6">
                 <button 
                     pButton 
                     pRipple 
@@ -62,10 +62,10 @@
             </div>
 
             <!-- Sección de filtros -->
-            <div class="card mb-4" *ngIf="tipoLicenciaSeleccionado">
-                <h5>Filtros para {{ obtenerNombreTipoLicencia() }}</h5>
+            <div class="card mb-6 p-4" *ngIf="tipoLicenciaSeleccionado">
+                <h5 class="mb-3">Filtros para {{ obtenerNombreTipoLicencia() }}</h5>
                 
-                <div class="flex flex-wrap gap-2 mb-3">
+                <div class="flex flex-wrap gap-3 mb-4">
                     <button 
                         pButton 
                         pRipple 
@@ -111,6 +111,7 @@
                 [showCurrentPageReport]="true"
                 currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros"
                 [rowsPerPageOptions]="[10, 20, 30]"
+                styleClass="p-datatable-lg"
                 *ngIf="tipoLicenciaSeleccionado">
                 
                 <ng-template pTemplate="header">
@@ -178,10 +179,10 @@
     header="Filtrar por Fecha de Adquisición" 
     [(visible)]="mostrarDialogoFiltroFecha" 
     [modal]="true" 
-    [style]="{width: '600px', height: '350px', maxHeight: '90vh', overflow: 'auto'}">
-    <div class="formgrid grid">
-        <div class="field col-12">
-            <label for="tipoFecha">Tipo de filtro:</label>
+    [style]="{width: '700px', height: '650px', maxHeight: '90vh', overflow: 'auto'}">
+    <div class="formgrid grid p-4">
+        <div class="field col-12 mb-4">
+            <label for="tipoFecha" class="block mb-2 font-semibold">Tipo de filtro:</label>
             <p-dropdown 
                 id="tipoFecha"
                 [(ngModel)]="tipoFiltroFecha" 
@@ -189,48 +190,48 @@
                 optionLabel="label" 
                 optionValue="value"
                 placeholder="Seleccione tipo de filtro"
-                class="w-full">
+                class="w-full p-inputtext-lg">
             </p-dropdown>
         </div>
-        <div class="field col-12" *ngIf="tipoFiltroFecha && tipoFiltroFecha.trim() === 'exacta'">
-            <label for="fechaExacta">Fecha exacta:</label>
+        <div class="field col-12 mb-4" *ngIf="tipoFiltroFecha && tipoFiltroFecha.trim() === 'exacta'">
+            <label for="fechaExacta" class="block mb-2 font-semibold">Fecha exacta:</label>
             <p-calendar 
                 id="fechaExacta"
                 [(ngModel)]="filtroFechaExacta" 
                 dateFormat="yy-mm-dd"
                 placeholder="Seleccione fecha"
-                class="w-full">
+                class="w-full p-inputtext-lg">
             </p-calendar>
         </div>
-        <div class="field col-6" *ngIf="tipoFiltroFecha && tipoFiltroFecha.trim() === 'rango'">
-            <label for="fechaInicio">Fecha inicio:</label>
+        <div class="field col-6 mb-4" *ngIf="tipoFiltroFecha && tipoFiltroFecha.trim() === 'rango'">
+            <label for="fechaInicio" class="block mb-2 font-semibold">Fecha inicio:</label>
             <p-calendar 
                 id="fechaInicio"
                 [(ngModel)]="filtroFechaInicio" 
                 dateFormat="yy-mm-dd"
                 placeholder="Fecha inicio"
-                class="w-full">
+                class="w-full p-inputtext-lg">
             </p-calendar>
         </div>
-        <div class="field col-6" *ngIf="tipoFiltroFecha && tipoFiltroFecha.trim() === 'rango'">
-            <label for="fechaFin">Fecha fin:</label>
+        <div class="field col-6 mb-4" *ngIf="tipoFiltroFecha && tipoFiltroFecha.trim() === 'rango'">
+            <label for="fechaFin" class="block mb-2 font-semibold">Fecha fin:</label>
             <p-calendar 
                 id="fechaFin"
                 [(ngModel)]="filtroFechaFin" 
                 dateFormat="yy-mm-dd"
                 placeholder="Fecha fin"
-                class="w-full">
+                class="w-full p-inputtext-lg">
             </p-calendar>
         </div>
     </div>
     <ng-template pTemplate="footer">
-        <div class="flex justify-content-end gap-2 mt-4">
+        <div class="flex justify-content-end gap-3 mt-6">
             <button 
                 pButton 
                 pRipple 
                 label="Cancelar" 
                 icon="pi pi-times" 
-                class="p-button-text"
+                class="p-button-text p-button-lg"
                 (click)="mostrarDialogoFiltroFecha = false">
             </button>
             <button 
@@ -238,6 +239,7 @@
                 pRipple 
                 label="Aplicar" 
                 icon="pi pi-check" 
+                class="p-button-lg"
                 (click)="aplicarFiltroFecha()">
             </button>
         </div>
@@ -249,11 +251,11 @@
     header="Filtrar por Total de Dispositivos" 
     [(visible)]="mostrarDialogoFiltroDispositivos" 
     [modal]="true" 
-    [style]="{width: '450px'}">
+    [style]="{width: '550px'}">
     
-    <div class="formgrid grid">
-        <div class="field col-12">
-            <label for="tipoDispositivos">Tipo de filtro:</label>
+    <div class="formgrid grid p-4">
+        <div class="field col-12 mb-4">
+            <label for="tipoDispositivos" class="block mb-2 font-semibold">Tipo de filtro:</label>
             <p-dropdown 
                 id="tipoDispositivos"
                 [(ngModel)]="tipoFiltroDispositivos" 
@@ -261,60 +263,63 @@
                 optionLabel="label" 
                 optionValue="value"
                 placeholder="Seleccione tipo de filtro"
-                class="w-full">
+                class="w-full p-inputtext-lg">
             </p-dropdown>
         </div>
         
-        <div class="field col-12" *ngIf="tipoFiltroDispositivos === 'exacto'">
-            <label for="dispositivosExacto">Total exacto de dispositivos:</label>
+        <div class="field col-12 mb-4" *ngIf="tipoFiltroDispositivos === 'exacto'">
+            <label for="dispositivosExacto" class="block mb-2 font-semibold">Total exacto de dispositivos:</label>
             <p-inputNumber 
                 id="dispositivosExacto"
                 [(ngModel)]="filtroDispositivosExacto" 
                 [min]="0"
                 placeholder="Ingrese número exacto"
-                class="w-full">
+                class="w-full p-inputtext-lg">
             </p-inputNumber>
         </div>
         
-        <div class="field col-6" *ngIf="tipoFiltroDispositivos === 'rango'">
-            <label for="dispositivosMin">Mínimo:</label>
+        <div class="field col-6 mb-4" *ngIf="tipoFiltroDispositivos === 'rango'">
+            <label for="dispositivosMin" class="block mb-2 font-semibold">Mínimo:</label>
             <p-inputNumber 
                 id="dispositivosMin"
                 [(ngModel)]="filtroDispositivosMin" 
                 [min]="0"
                 placeholder="Mínimo"
-                class="w-full">
+                class="w-full p-inputtext-lg">
             </p-inputNumber>
         </div>
         
-        <div class="field col-6" *ngIf="tipoFiltroDispositivos === 'rango'">
-            <label for="dispositivosMax">Máximo:</label>
+        <div class="field col-6 mb-4" *ngIf="tipoFiltroDispositivos === 'rango'">
+            <label for="dispositivosMax" class="block mb-2 font-semibold">Máximo:</label>
             <p-inputNumber 
                 id="dispositivosMax"
                 [(ngModel)]="filtroDispositivosMax" 
                 [min]="0"
                 placeholder="Máximo"
-                class="w-full">
+                class="w-full p-inputtext-lg">
             </p-inputNumber>
         </div>
     </div>
     
     <ng-template pTemplate="footer">
-        <button 
-            pButton 
-            pRipple 
-            label="Cancelar" 
-            icon="pi pi-times" 
-            class="p-button-text"
-            (click)="mostrarDialogoFiltroDispositivos = false">
-        </button>
-        <button 
-            pButton 
-            pRipple 
-            label="Aplicar" 
-            icon="pi pi-check" 
-            (click)="aplicarFiltroDispositivos()">
-        </button>
+        <div class="flex justify-content-end gap-3 mt-6">
+            <button 
+                pButton 
+                pRipple 
+                label="Cancelar" 
+                icon="pi pi-times" 
+                class="p-button-text p-button-lg"
+                (click)="mostrarDialogoFiltroDispositivos = false">
+            </button>
+            <button 
+                pButton 
+                pRipple 
+                label="Aplicar" 
+                icon="pi pi-check" 
+                class="p-button-lg"
+                (click)="aplicarFiltroDispositivos()">
+            </button>
+        </div>
     </ng-template>
 </p-dialog>
 
@@ -323,11 +328,11 @@
     header="Filtrar por Disponibilidad" 
     [(visible)]="mostrarDialogoFiltroDisponibilidad" 
     [modal]="true" 
-    [style]="{width: '450px'}">
+    [style]="{width: '550px'}">
     
-    <div class="formgrid grid">
-        <div class="field col-12">
-            <label for="tipoDisponibilidad">Tipo de filtro:</label>
+    <div class="formgrid grid p-4">
+        <div class="field col-12 mb-4">
+            <label for="tipoDisponibilidad" class="block mb-2 font-semibold">Tipo de filtro:</label>
             <p-dropdown 
                 id="tipoDisponibilidad"
                 [(ngModel)]="tipoFiltroDisponibilidad" 
@@ -335,60 +340,63 @@
                 optionLabel="label" 
                 optionValue="value"
                 placeholder="Seleccione tipo de filtro"
-                class="w-full">
+                class="w-full p-inputtext-lg">
             </p-dropdown>
         </div>
         
-        <div class="field col-12" *ngIf="tipoFiltroDisponibilidad === 'exacto'">
-            <label for="disponibilidadExacta">Disponibilidad exacta:</label>
+        <div class="field col-12 mb-4" *ngIf="tipoFiltroDisponibilidad === 'exacto'">
+            <label for="disponibilidadExacta" class="block mb-2 font-semibold">Disponibilidad exacta:</label>
             <p-inputNumber 
                 id="disponibilidadExacta"
                 [(ngModel)]="filtroDisponibilidadExacta" 
                 [min]="0"
                 placeholder="Ingrese cantidad exacta"
-                class="w-full">
+                class="w-full p-inputtext-lg">
             </p-inputNumber>
         </div>
         
-        <div class="field col-6" *ngIf="tipoFiltroDisponibilidad === 'rango'">
-            <label for="disponibilidadMin">Mínimo:</label>
+        <div class="field col-6 mb-4" *ngIf="tipoFiltroDisponibilidad === 'rango'">
+            <label for="disponibilidadMin" class="block mb-2 font-semibold">Mínimo:</label>
             <p-inputNumber 
                 id="disponibilidadMin"
                 [(ngModel)]="filtroDisponibilidadMin" 
                 [min]="0"
                 placeholder="Mínimo"
-                class="w-full">
+                class="w-full p-inputtext-lg">
             </p-inputNumber>
         </div>
         
-        <div class="field col-6" *ngIf="tipoFiltroDisponibilidad === 'rango'">
-    <label for="disponibilidadMax">Máximo:</label>
-    <p-inputNumber 
-        id="disponibilidadMax"
-        [(ngModel)]="filtroDisponibilidadMax" 
-        [min]="0"
-        placeholder="Máximo"
-        class="w-full">
-    </p-inputNumber>
-</div>
+        <div class="field col-6 mb-4" *ngIf="tipoFiltroDisponibilidad === 'rango'">
+            <label for="disponibilidadMax" class="block mb-2 font-semibold">Máximo:</label>
+            <p-inputNumber 
+                id="disponibilidadMax"
+                [(ngModel)]="filtroDisponibilidadMax" 
+                [min]="0"
+                placeholder="Máximo"
+                class="w-full p-inputtext-lg">
+            </p-inputNumber>
+        </div>
     </div>
     
     <ng-template pTemplate="footer">
-        <button 
-            pButton 
-            pRipple 
-            label="Cancelar" 
-            icon="pi pi-times" 
-            class="p-button-text"
-            (click)="mostrarDialogoFiltroDisponibilidad = false">
-        </button>
-        <button 
-            pButton 
-            pRipple 
-            label="Aplicar" 
-            icon="pi pi-check" 
-            (click)="aplicarFiltroDisponibilidad()">
-        </button>
+        <div class="flex justify-content-end gap-3 mt-6">
+            <button 
+                pButton 
+                pRipple 
+                label="Cancelar" 
+                icon="pi pi-times" 
+                class="p-button-text p-button-lg"
+                (click)="mostrarDialogoFiltroDisponibilidad = false">
+            </button>
+            <button 
+                pButton 
+                pRipple 
+                label="Aplicar" 
+                icon="pi pi-check" 
+                class="p-button-lg"
+                (click)="aplicarFiltroDisponibilidad()">
+            </button>
+        </div>
     </ng-template>
 </p-dialog>
 
@@ -398,32 +406,30 @@
   [(visible)]="registroLicenciaDialog" 
   [modal]="true" 
   [closable]="true" 
-  [style]="{width: '450px'}">
+  [style]="{width: '600px', maxHeight: '90vh', overflow: 'auto'}">
 
-  <form #formLicencia="ngForm" (ngSubmit)="guardarLicencia()">
+  <form #formLicencia="ngForm" (ngSubmit)="guardarLicencia()" class="p-4">
     <!-- Selección de cliente y dispositivo para todos los tipos -->
     <ng-container *ngIf="tipoLicenciaSeleccionado === 'antivirus' || tipoLicenciaSeleccionado === 'ofimatica' || tipoLicenciaSeleccionado === 'sistema_operativo'">
-      <div class="field mb-3">
-        <label for="clienteLicencia">Cliente</label>
-      <p-dropdown 
-          id="clienteLicencia"
-          [options]="clientes"
-          [(ngModel)]="clienteSeleccionado"
-          name="clienteSeleccionado"
-          optionLabel="displayName"
-          [filter]="true"
-          filterPlaceholder="Buscar cliente"
-          [virtualScroll]="true"
-          [itemSize]="40"
-          placeholder="Seleccione un cliente"
-          class="w-full"
-          (onChange)="onClienteChange($event.value)">
+      <div class="field mb-4">
+        <label for="clienteLicencia" class="block mb-2 font-semibold">Cliente</label>
+        <p-dropdown 
+            id="clienteLicencia"
+            [options]="clientes"
+            [(ngModel)]="clienteSeleccionado"
+            name="clienteSeleccionado"
+            optionLabel="displayName"
+            [filter]="true"
+            filterPlaceholder="Buscar cliente"
+            [virtualScroll]="true"
+            [itemSize]="40"
+            placeholder="Seleccione un cliente"
+            class="w-full p-inputtext-xl border border-gray-400"
+            (onChange)="onClienteChange($event.value)">
         </p-dropdown>
-
-
       </div>
-      <div class="field mb-3">
-        <label for="dispositivoAsociado">Dispositivo asociado</label>
+      <div class="field mb-4">
+        <label for="dispositivoAsociado" class="block mb-2 font-semibold">Dispositivo asociado</label>
         <p-dropdown
           id="dispositivoAsociado"
           [options]="dispositivosCliente"
@@ -434,100 +440,106 @@
           [disabled]="!clienteSeleccionado"
           filterPlaceholder="Buscar dispositivo"
           placeholder="Seleccione un dispositivo"
-          class="w-full">
+          class="w-full p-inputtext-xl border border-gray-400">
         </p-dropdown>
       </div>
 
       <!-- Nueva fila para Ingreso y Egreso en dos columnas -->
-      <div class="field mb-3">
+      <div class="field mb-4">
         <div class="formgrid grid">
           <div class="field col-6">
-            <label for="ingreso">Ingreso</label>
-            <input id="ingreso" type="number" pInputText [(ngModel)]="nuevaLicencia.ingreso" name="ingreso" class="w-full"/>
+            <label for="ingreso" class="block mb-2 font-semibold">Ingreso</label>
+            <input id="ingreso" type="number" pInputText [(ngModel)]="nuevaLicencia.ingreso" name="ingreso" class="w-full p-inputtext-xl border border-gray-400"/>
           </div>
           <div class="field col-6">
-            <label for="egreso">Egreso</label>
-            <input id="egreso" type="number" pInputText [(ngModel)]="nuevaLicencia.egreso" name="egreso" class="w-full"/>
+            <label for="egreso" class="block mb-2 font-semibold">Egreso</label>
+            <input id="egreso" type="number" pInputText [(ngModel)]="nuevaLicencia.egreso" name="egreso" class="w-full p-inputtext-xl border border-gray-400"/>
           </div>
         </div>
       </div>
     </ng-container>
-    <div class="field mb-3">
-      <label for="detalles">Detalles</label>
-      <input id="detalles" type="text" pInputText [(ngModel)]="nuevaLicencia.detalles" name="detalles" class="w-full"/>
+    <div class="field mb-4">
+      <label for="detalles" class="block mb-2 font-semibold">Detalles</label>
+      <input id="detalles" type="text" pInputText [(ngModel)]="nuevaLicencia.detalles" name="detalles" class="w-full p-inputtext-xl border border-gray-400"/>
     </div>
-    <div class="field mb-3">
-      <label for="fechaInicio">Fecha Inicio</label>
-      <input id="fechaInicio" type="date" pInputText [(ngModel)]="nuevaLicencia.fechaInicio" name="fechaInicio" class="w-full" (change)="recalcularFechaFin()"/>
+    <div class="field mb-4">
+      <label for="fechaInicio" class="block mb-2 font-semibold">Fecha Inicio</label>
+      <p-calendar 
+        id="fechaInicio"
+        [(ngModel)]="nuevaLicencia.fechaInicio" 
+        name="fechaInicio" 
+        class="w-full p-inputtext-xl border border-gray-400"
+        (onSelect)="recalcularFechaFin()"
+        [showOnFocus]="true"
+        [readonlyInput]="true"
+      ></p-calendar>
     </div>
-    <div class="field mb-3">
-      <label for="tiempoLicencia">Tiempo Licencia</label>
-      <select id="tiempoLicencia" [(ngModel)]="nuevaLicencia.tiempoLicencia" name="tiempoLicencia" class="w-full" (change)="recalcularFechaFin()">
-        <option value="6m">6 meses</option>
-        <option value="1a">1 año</option>
-        <option value="2a">2 años</option>
-        <option value="3a">3 años</option>
-      </select>
+    <div class="field mb-4">
+      <label for="fechaFin" class="block mb-2 font-semibold">Fecha Fin</label>
+      <input id="fechaFin" type="date" pInputText [(ngModel)]="nuevaLicencia.fechaFin" name="fechaFin" class="w-full p-inputtext-xl border border-gray-400" readonly/>
     </div>
-    <div class="field mb-3">
-      <label for="fechaFin">Fecha Fin</label>
-      <input id="fechaFin" type="date" pInputText [(ngModel)]="nuevaLicencia.fechaFin" name="fechaFin" class="w-full" readonly/>
-    </div>
-    <div class="field mb-3">
-      <label for="fechaAviso">Fecha Aviso</label>
-      <input id="fechaAviso" type="date" pInputText [(ngModel)]="nuevaLicencia.fechaAviso" name="fechaAviso" class="w-full"/>
+    <div class="field mb-4">
+      <label for="fechaAviso" class="block mb-2 font-semibold">Fecha Aviso</label>
+      <p-calendar 
+        id="fechaAviso"
+        [(ngModel)]="nuevaLicencia.fechaAviso" 
+        name="fechaAviso" 
+        class="w-full p-inputtext-xl border border-gray-400"
+        [showOnFocus]="true"
+        [readonlyInput]="true"
+      ></p-calendar>
     </div>
     <!-- Campos específicos por tipo de licencia -->
     <ng-container *ngIf="tipoLicenciaSeleccionado === 'antivirus'">
-      <div class="field mb-3">
-        <label for="nombreAntivirus">Nombre Antivirus</label>
-        <input id="nombreAntivirus" type="text" pInputText [(ngModel)]="nuevaLicencia.nombreAntivirus" name="nombreAntivirus" class="w-full"/>
+      <div class="field mb-4">
+        <label for="nombreAntivirus" class="block mb-2 font-semibold">Nombre Antivirus</label>
+        <input id="nombreAntivirus" type="text" pInputText [(ngModel)]="nuevaLicencia.nombreAntivirus" name="nombreAntivirus" class="w-full p-inputtext-xl border border-gray-400"/>
       </div>
-      <div class="field mb-3">
-        <label for="userAntivirus">Usuario Antivirus</label>
-        <input id="userAntivirus" type="text" pInputText [(ngModel)]="nuevaLicencia.userAntivirus" name="userAntivirus" class="w-full"/>
+      <div class="field mb-4">
+        <label for="userAntivirus" class="block mb-2 font-semibold">Usuario Antivirus</label>
+        <input id="userAntivirus" type="text" pInputText [(ngModel)]="nuevaLicencia.userAntivirus" name="userAntivirus" class="w-full p-inputtext-xl border border-gray-400"/>
       </div>
     </ng-container>
     <ng-container *ngIf="tipoLicenciaSeleccionado === 'ofimatica'">
-      <div class="field mb-3">
-        <label for="emailCtacliente">Email Cuenta Cliente</label>
-        <input id="emailCtacliente" type="text" pInputText [(ngModel)]="nuevaLicencia.emailCtacliente" name="emailCtacliente" class="w-full"/>
+      <div class="field mb-4">
+        <label for="emailCtacliente" class="block mb-2 font-semibold">Email Cuenta Cliente</label>
+        <input id="emailCtacliente" type="text" pInputText [(ngModel)]="nuevaLicencia.emailCtacliente" name="emailCtacliente" class="w-full p-inputtext-xl border border-gray-400"/>
       </div>
-      <div class="field mb-3">
-        <label for="passwCtacliente">Password Cuenta Cliente</label>
-        <input id="passwCtacliente" type="text" pInputText [(ngModel)]="nuevaLicencia.passwCtacliente" name="passwCtacliente" class="w-full"/>
+      <div class="field mb-4">
+        <label for="passwCtacliente" class="block mb-2 font-semibold">Password Cuenta Cliente</label>
+        <input id="passwCtacliente" type="text" pInputText [(ngModel)]="nuevaLicencia.passwCtacliente" name="passwCtacliente" class="w-full p-inputtext-xl border border-gray-400"/>
       </div>
-      <div class="field mb-3">
-        <label for="normM365">Norma M365</label>
-        <input id="normM365" type="text" pInputText [(ngModel)]="nuevaLicencia.normM365" name="normM365" class="w-full"/>
+      <div class="field mb-4">
+        <label for="normM365" class="block mb-2 font-semibold">Norma M365</label>
+        <input id="normM365" type="text" pInputText [(ngModel)]="nuevaLicencia.normM365" name="normM365" class="w-full p-inputtext-xl border border-gray-400"/>
       </div>
-      <div class="field mb-3">
-        <label for="userM365">Usuario M365</label>
-        <input id="userM365" type="text" pInputText [(ngModel)]="nuevaLicencia.userM365" name="userM365" class="w-full"/>
+      <div class="field mb-4">
+        <label for="userM365" class="block mb-2 font-semibold">Usuario M365</label>
+        <input id="userM365" type="text" pInputText [(ngModel)]="nuevaLicencia.userM365" name="userM365" class="w-full p-inputtext-xl border border-gray-400"/>
       </div>
-      <div class="field mb-3">
-        <label for="passM365">Password M365</label>
-        <input id="passM365" type="text" pInputText [(ngModel)]="nuevaLicencia.passM365" name="passM365" class="w-full"/>
+      <div class="field mb-4">
+        <label for="passM365" class="block mb-2 font-semibold">Password M365</label>
+        <input id="passM365" type="text" pInputText [(ngModel)]="nuevaLicencia.passM365" name="passM365" class="w-full p-inputtext-xl border border-gray-400"/>
       </div>
     </ng-container>
     <ng-container *ngIf="tipoLicenciaSeleccionado === 'sistema_operativo'">
-      <div class="field mb-3">
-        <label for="soActivado">SO Activado</label>
-        <input id="soActivado" type="text" pInputText [(ngModel)]="nuevaLicencia.soActivado" name="soActivado" class="w-full"/>
+      <div class="field mb-4">
+        <label for="soActivado" class="block mb-2 font-semibold">SO Activado</label>
+        <input id="soActivado" type="text" pInputText [(ngModel)]="nuevaLicencia.soActivado" name="soActivado" class="w-full p-inputtext-xl border border-gray-400"/>
       </div>
-      <div class="field mb-3">
-        <label for="key">KEY</label>
-        <input id="key" type="text" pInputText [(ngModel)]="nuevaLicencia.key" name="key" class="w-full"/>
+      <div class="field mb-4">
+        <label for="key" class="block mb-2 font-semibold">KEY</label>
+        <input id="key" type="text" pInputText [(ngModel)]="nuevaLicencia.key" name="key" class="w-full p-inputtext-xl border border-gray-400"/>
       </div>
-      <div class="field mb-3">
-        <label for="keyTipo">Tipo de KEY</label>
-        <input id="keyTipo" type="text" pInputText [(ngModel)]="nuevaLicencia.keyTipo" name="keyTipo" class="w-full"/>
+      <div class="field mb-4">
+        <label for="keyTipo" class="block mb-2 font-semibold">Tipo de KEY</label>
+        <input id="keyTipo" type="text" pInputText [(ngModel)]="nuevaLicencia.keyTipo" name="keyTipo" class="w-full p-inputtext-xl border border-gray-400"/>
       </div>
     </ng-container>
 
-    <div class="flex justify-content-end gap-2 mt-4">
-      <button pButton label="Cancelar" class="p-button-secondary" type="button" (click)="registroLicenciaDialog=false"></button>
-      <button pButton label="Registrar" type="submit" [disabled]="formLicencia.invalid"></button>
+    <div class="flex justify-content-end gap-3 mt-6">
+      <button pButton label="Cancelar" class="p-button-secondary p-button-lg" type="button" (click)="registroLicenciaDialog=false"></button>
+      <button pButton label="Registrar" type="submit" class="p-button-lg" [disabled]="formLicencia.invalid"></button>
     </div>
   </form>
 </p-dialog>

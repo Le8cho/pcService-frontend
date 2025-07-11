@@ -15,7 +15,7 @@
                       pRipple 
                       label="NUEVO" 
                       icon="pi pi-plus" 
-                      class="p-button-success mr-2" 
+                      class="p-button-primary mr-2" 
                       (click)="openNew()">
                   </button>
               </ng-template>
@@ -29,7 +29,7 @@
                       pInputText 
                       placeholder="Buscar por ID, cliente o equipo..." 
                       [(ngModel)]="searchTerm"
-                      (keyup.enter)="searchMantenimientos()"
+                      (input)="searchMantenimientos()"
                       style="width: 300px;">
                   <button 
                       pButton 
@@ -121,22 +121,8 @@
                       </td>
                       <td>
                           <div class="flex">
-                              <button 
-                                  pButton 
-                                  pRipple 
-                                  icon="pi pi-pencil" 
-                                  class="p-button-rounded p-button-success mr-2" 
-                                  (click)="editMantenimiento(mantenimiento)"
-                                  pTooltip="Editar">
-                              </button>
-                              <button 
-                                  pButton 
-                                  pRipple 
-                                  icon="pi pi-trash" 
-                                  class="p-button-rounded p-button-warning" 
-                                  (click)="deleteMantenimiento(mantenimiento)"
-                                  pTooltip="Eliminar">
-                              </button>
+                            <button pButton icon="pi pi-pencil" (click)="editMantenimiento(mantenimiento)"></button>
+                            <button pButton icon="pi pi-trash" (click)="deleteMantenimiento(mantenimiento)"></button>
                           </div>
                       </td>
                   </tr>

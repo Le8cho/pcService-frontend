@@ -1,36 +1,122 @@
-<div class="card">
-  <h2>Gestión de Dispositivos</h2>
-  <p-toast></p-toast>
+<div class="grid">
+    <div class="col-12">
+        <div class="card px-6 py-6">
+            <p-toast></p-toast>
+            <p-toolbar styleClass="mb-4">
+                <ng-template pTemplate="left">
+                    <h2 class="m-0">Gestión de Dispositivos</h2>
+                </ng-template>
+                <ng-template pTemplate="right">
+                    <button 
+                        pButton 
+                        pRipple 
+                        label="NUEVO" 
+                        icon="pi pi-plus" 
+                        class="p-button-primary mr-2" 
+                        (click)="abrirDialogoDispositivo()">
+                    </button>
+                </ng-template>
+            </p-toolbar>
 
-  <!-- BOTÓN REGISTRAR DISPOSITIVO -->
-  <button pButton type="button" label="Registrar Dispositivo" icon="pi pi-plus" (click)="abrirDialogoDispositivo()"></button>
+            <div class="mb-4">
+                <div class="p-inputgroup">
+                    <input 
+                        type="text" 
+                        pInputText 
+                        placeholder="Buscar por ..." 
+                        [(ngModel)]="searchTerm"
+                        (input)="searchDispositivos()"
+                        style="width: 300px;">
+                    <button 
+                        pButton 
+                        pRipple 
+                        type="button" 
+                        icon="pi pi-search" 
+                        class="p-button-primary"
+                        label="BUSCAR"
+                        (click)="searchDispositivos()">
+                    </button>
+                    <button 
+                        pButton 
+                        pRipple 
+                        type="button" 
+                        icon="pi pi-times" 
+                        class="p-button-secondary"
+                        (click)="clearSearch()"
+                        *ngIf="searchTerm">
+                    </button>
+                </div>
+            </div>
   
-  <!-- TABLA CON LOS DISPOSITIVOS -->
-  <p-table [value]="dispositivos" [paginator]="true" [rows]="10">
-    <ng-template pTemplate="header">
-      <tr>
-        <th>ID</th>
-        <th>ID Cliente</th>
-        <th>Tipo</th>
-        <th>Marca</th>
-        <th>Modelo</th>
-        <th>Acciones</th>
-      </tr>
-    </ng-template>
-    <ng-template pTemplate="body" let-dispositivo>
-      <tr>
-        <td>{{dispositivo.ID_DISPOSITIVO}}</td>
-        <td>{{dispositivo.ID_CLIENTE}}</td>
-        <td>{{dispositivo.TIPO_DISPOSITIVO}}</td>
-        <td>{{dispositivo.MARCA}}</td>
-        <td>{{dispositivo.MODELO}}</td>
-        <td>
-          <button pButton icon="pi pi-pencil" (click)="editarDispositivo(dispositivo)"></button>
-          <button pButton icon="pi pi-trash" (click)="eliminarDispositivo(dispositivo.ID_DISPOSITIVO)"></button>
-        </td>
-      </tr>
-    </ng-template>
-  </p-table>
+            <p-table 
+                #dt 
+                [value]="dispositivos" 
+                [rows]="10" 
+                [paginator]="true"
+                [globalFilterFields]="['ID_DISPOSITIVO','ID_CLIENTE','TIPO_DISPOSITIVO','MARCA','MODELO']"
+                [loading]="loading" responsiveLayout="scroll">
+                
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th pSortableColumn="ID_DISPOSITIVO">
+                            #Dispositivo 
+                            <p-sortIcon field="ID_DISPOSITIVO"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="ID_CLIENTE">
+                            Cliente 
+                            <p-sortIcon field="ID_CLIENTE"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="TIPO_DISPOSITIVO">
+                            Tipo 
+                            <p-sortIcon field="TIPO_DISPOSITIVO"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="MARCA">
+                            Marca 
+                            <p-sortIcon field="MARCA"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="MODELO">
+                            Modelo 
+                            <p-sortIcon field="MODELO"></p-sortIcon>
+                        </th>
+                        <th>Acciones</th>
+                    </tr>
+                </ng-template>
+                
+                <ng-template pTemplate="body" let-dispositivo>
+                    <tr>
+                        <td>
+                            <span class="p-column-title"></span>
+                            {{dispositivo.ID_DISPOSITIVO}}
+                        </td>
+                        <td>
+                            <span class="p-column-title"></span>
+                            {{dispositivo.NOMBRE_CLIENTE || dispositivo.ID_CLIENTE}}
+                        </td>
+                        <td>
+                            <span class="p-column-title"></span>
+                            {{dispositivo.TIPO_DISPOSITIVO}}
+                        </td>
+                        <td>
+                            <span class="p-column-title"></span>
+                            {{dispositivo.MARCA}}
+                        </td>
+                        <td>
+                            <span class="p-column-title"></span>
+                            {{dispositivo.MODELO}}
+                        </td>
+                        <td>
+                            <div class="flex">
+                                <button pButton icon="pi pi-pencil" (click)="editarDispositivo(dispositivo)"></button>
+                                <button pButton icon="pi pi-trash" (click)="eliminarDispositivo(dispositivo.ID_DISPOSITIVO)"></button>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+
+            <p-confirmDialog [style]="{width: '425px'}"></p-confirmDialog>
+        </div>
+    </div>
 </div>
 
 <!-- Diálogo para crear/editar dispositivo -->

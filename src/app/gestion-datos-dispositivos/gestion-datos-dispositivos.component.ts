@@ -8,6 +8,10 @@ import { DropdownModule } from 'primeng/dropdown';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { InputTextModule } from 'primeng/inputtext';
+import { ToolbarModule } from 'primeng/toolbar';
+import { TooltipModule } from 'primeng/tooltip';
+import { RippleModule } from 'primeng/ripple';
 import { ApiService } from '../ServiciosSIST/api.service';
 
 @Component({
@@ -21,7 +25,11 @@ import { ApiService } from '../ServiciosSIST/api.service';
     DialogModule,
     DropdownModule,
     ToastModule,
-    ConfirmDialogModule
+    ConfirmDialogModule,
+    InputTextModule,
+    ToolbarModule,
+    TooltipModule,
+    RippleModule
   ],
   templateUrl: './gestion-datos-dispositivos.component.html',
   styleUrls: ['./gestion-datos-dispositivos.component.scss'],
@@ -29,10 +37,13 @@ import { ApiService } from '../ServiciosSIST/api.service';
 })
 export class GestionDatosDispositivosComponent implements OnInit {
   dispositivos: any[] = [];
+  dispositivosOriginales: any[] = [];
   mostrarDialogoDispositivo = false;
   editandoDispositivo = false;
   dispositivoSeleccionado: any = {};
   clienteOptions: any[] = []; // Opciones para el dropdown de clientes
+  searchTerm: string = '';
+  loading: boolean = false;
 
   constructor(
     private apiService: ApiService,
@@ -66,11 +77,15 @@ export class GestionDatosDispositivosComponent implements OnInit {
   }
 
   cargarDispositivos() {
+    this.loading = true;
     this.apiService.getDispositivos().subscribe({
       next: (data) => {
+        this.dispositivosOriginales = data;
         this.dispositivos = data;
+        this.loading = false;
       },
       error: (error) => {
+        this.loading = false;
         console.error('Error al cargar dispositivos:', error);
         this.messageService.add({
           severity: 'error',
@@ -168,6 +183,29 @@ export class GestionDatosDispositivosComponent implements OnInit {
       return false;
     }
     return true;
+  }
+
+  searchDispositivos() {
+    if (!this.searchTerm.trim()) {
+      this.cargarDispositivos();
+      return;
+    }
+    this.loading = true;
+    this.apiService.searchDispositivos(this.searchTerm).subscribe({
+      next: data => {
+        this.dispositivos = data;
+        this.loading = false;
+      },
+      error: err => {
+        this.loading = false;
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error en la búsqueda' });
+      }
+    });
+  }
+
+  clearSearch() {
+    this.searchTerm = '';
+    this.cargarDispositivos();
   }
 
   cerrarDialogoDispositivo() {

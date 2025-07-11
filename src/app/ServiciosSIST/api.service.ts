@@ -147,6 +147,12 @@ deleteDispositivo(id: number): Observable<any> {
   return this.http.delete(`${this.apiUrl}/dispositivos/${id}`);
 }
 
+// Buscar dispositivos
+searchDispositivos(term: string): Observable<any[]> {
+  const params = new HttpParams().set('search', term);
+  return this.http.get<any[]>(`${this.apiUrl}/dispositivos/search`, { params });
+}
+
 /*
 Servicios de Gestión de Datos Login
 */

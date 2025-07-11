@@ -8,6 +8,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { DialogModule } from 'primeng/dialog';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
+import { ToolbarModule } from 'primeng/toolbar';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Cliente } from '../models/cliente.interface';
 import { ClienteService } from '../services/cliente.service';
@@ -23,7 +24,8 @@ import { ClienteService } from '../services/cliente.service';
         InputTextModule,
         DialogModule,
         ConfirmDialogModule,
-        ToastModule
+        ToastModule,
+        ToolbarModule
     ],
     providers: [ConfirmationService, MessageService],
     templateUrl: './gestion-datos-clientes.component.html',
@@ -35,6 +37,7 @@ export class GestionDatosClientesComponent implements OnInit {
     mostrarDialog: boolean = false;
     modoEdicion: boolean = false;
     terminoBusqueda: string = '';
+    loading: boolean = false;
 
     constructor(
         private clienteService: ClienteService,
@@ -47,8 +50,15 @@ export class GestionDatosClientesComponent implements OnInit {
     }
 
     cargarClientes() {
-        this.clienteService.getClientes().subscribe(clientes => {
-            this.clientes = clientes;
+        this.loading = true;
+        this.clienteService.getClientes().subscribe({
+            next: (clientes) => {
+                this.clientes = clientes;
+                this.loading = false;
+            },
+            error: () => {
+                this.loading = false;
+            }
         });
     }
 
@@ -147,16 +157,29 @@ export class GestionDatosClientesComponent implements OnInit {
 
     buscarClientes() {
         if (this.terminoBusqueda.trim()) {
-            this.clienteService.getClientes().subscribe((clientes: Cliente[]) => {
-                this.clientes = clientes.filter(cliente =>
-                    cliente.nombre.toLowerCase().includes(this.terminoBusqueda.toLowerCase()) ||
-                    cliente.apellido.toLowerCase().includes(this.terminoBusqueda.toLowerCase()) ||
-                    cliente.correo.toLowerCase().includes(this.terminoBusqueda.toLowerCase())
-                );
+            this.loading = true;
+            this.clienteService.getClientes().subscribe({
+                next: (clientes: Cliente[]) => {
+                    this.clientes = clientes.filter(cliente =>
+                        cliente.nombre.toLowerCase().includes(this.terminoBusqueda.toLowerCase()) ||
+                        cliente.apellido.toLowerCase().includes(this.terminoBusqueda.toLowerCase()) ||
+                        cliente.correo.toLowerCase().includes(this.terminoBusqueda.toLowerCase()) ||
+                        cliente.id_cliente?.toString().includes(this.terminoBusqueda)
+                    );
+                    this.loading = false;
+                },
+                error: () => {
+                    this.loading = false;
+                }
             });
         } else {
             this.cargarClientes();
         }
+    }
+
+    clearSearch() {
+        this.terminoBusqueda = '';
+        this.cargarClientes();
     }
 
     ocultarDialog() {
