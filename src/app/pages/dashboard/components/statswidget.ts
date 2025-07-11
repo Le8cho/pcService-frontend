@@ -16,7 +16,7 @@ import { CommonModule } from '@angular/common';
                         <i class="pi pi-users text-cyan-500 !text-xl"></i>
                     </div>
                 </div>
-                <div><span class="text-primary font-medium">Nuevos  </span> <span class="text-muted-color">en el mes</span></div>
+                <div><span class="text-primary font-medium">Operaciones  </span> <span class="text-muted-color">en el mes</span></div>
             </div>
         </div>
         <div class="col-span-12 lg:col-span-6 xl:col-span-3">
