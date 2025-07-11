@@ -60,7 +60,7 @@ export class LoginComponent {
     this.authService.login(credentials).subscribe({
       next: (response) => {
         this.loading = false;
-        this.router.navigate(['/']); // Cambia '/dashboard' por tu ruta principal
+        this.router.navigate(['/estadistico']); // Redirige a estadistico después de login
       },
       error: (err) => {
         this.loading = false;

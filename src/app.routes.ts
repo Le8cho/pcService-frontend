@@ -15,14 +15,16 @@ import { GestionDatosServiciosComponent } from './app/gestion-datos-servicios/ge
 import { GestionDatosClientesComponent } from './app/gestion-datos-clientes/gestion-datos-clientes.component';
 import { GestionDatosMantenimientoComponent } from './app/gestion-datos-mantenimiento/gestion-datos-mantenimiento.component';
 
-
+import { AuthGuard } from './app/guards/auth.guard';
 
 export const appRoutes: Routes = [
+    { path: '', redirectTo: 'login', pathMatch: 'full' },
+    { path: 'login', component: LoginComponent },
     {
         path: '',
         component: AppLayout,
+        canActivate: [AuthGuard],
         children: [
-            { path: '', component: EstadisticoComponent },
             { path: 'dashboard', component: Dashboard },
             { path: 'clientes', component: GestionDatosClientesComponent },
             { path: 'uikit', loadChildren: () => import('./app/pages/uikit/uikit.routes') },
@@ -34,12 +36,10 @@ export const appRoutes: Routes = [
             { path: 'gestion-servicios', component: GestionDatosServiciosComponent },
             { path: 'gestion-mantenimientos', component: GestionDatosMantenimientoComponent },
             { path: 'estadistico', component: EstadisticoComponent },
-  
         ]
     },
     { path: 'landing', component: Landing },
     { path: 'notfound', component: Notfound },
     { path: 'auth', loadChildren: () => import('./app/pages/auth/auth.routes') },
-    { path: 'login', component: LoginComponent}, /* Leo */
     { path: '**', redirectTo: '/notfound' }
 ];
