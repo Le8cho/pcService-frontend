@@ -1,59 +1,79 @@
-# Sakai19
+# PCService Frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.0.6.
+Este proyecto es el frontend de PCService, desarrollado en Angular. A continuación se detallan los pasos para instalar y levantar el proyecto en modo desarrollo.
 
-## Development server
+## Requisitos previos
 
-To start a local development server, run:
+- [Node.js](https://nodejs.org/) (versión recomendada: 18.x o superior)
+- [npm](https://www.npmjs.com/) (se instala junto con Node.js)
+- [Angular CLI](https://angular.io/cli) (versión recomendada: 19.x)
+
+Para instalar Angular CLI globalmente:
+
+```bash
+npm install -g @angular/cli
+```
+
+## Instalación del proyecto
+
+1. Clona el repositorio y navega a la carpeta del frontend:
+
+```bash
+git clone <URL_DEL_REPOSITORIO>
+cd pcService-frontend
+```
+
+2. Instala las dependencias:
+
+```bash
+npm install
+```
+
+## Levantar el servidor de desarrollo
+
+Para iniciar el servidor de desarrollo y trabajar en local:
 
 ```bash
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Por defecto, la aplicación estará disponible en [http://localhost:4200](http://localhost:4200).
 
-## Code scaffolding
+## Configuración de proxy (opcional)
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+Si necesitas consumir APIs del backend en desarrollo, asegúrate de que el archivo `proxy.conf.json` esté correctamente configurado. Puedes iniciar el servidor con proxy así:
 
 ```bash
-ng generate --help
+ng serve --proxy-config proxy.conf.json
 ```
 
-## Building
+## Comandos útiles
 
-To build the project run:
+- **Construir el proyecto para producción:**
+  ```bash
+  ng build --configuration production
+  ```
+- **Ejecutar pruebas unitarias:**
+  ```bash
+  ng test
+  ```
+- **Ejecutar pruebas end-to-end:**
+  ```bash
+  ng e2e
+  ```
 
-```bash
-ng build
-```
+## Notas adicionales
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+- Si tienes problemas con dependencias, prueba a borrar la carpeta `node_modules` y el archivo `package-lock.json`, luego ejecuta `npm install` de nuevo.
+- Para personalizar variables de entorno, revisa el archivo `src/environments/environment.ts`.
+- El proyecto utiliza [ng2-charts](https://valor-software.com/ng2-charts/) y [Chart.js](https://www.chartjs.org/) para gráficos.
 
-## Running unit tests
+## Estructura recomendada
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+- `src/app/` - Código fuente principal de la aplicación
+- `src/assets/` - Recursos estáticos (imágenes, estilos, etc.)
+- `src/environments/` - Configuración de entornos
 
-```bash
-ng test
-```
+## Soporte
 
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Para dudas o problemas, contacta con el equipo de desarrollo o abre un issue en el repositorio.
