@@ -33,6 +33,12 @@ export class AppMenu implements OnInit {
                     { label: 'Gestión de Servicios', icon: 'pi pi-fw pi-wrench', routerLink: ['/gestion-servicios'] },
                     { label: 'Gestión de Mantenimientos', icon: 'pi pi-fw pi-calendar', routerLink: ['/gestion-mantenimientos'] }
                 ]
+            },
+            {
+                label: 'DataWarehouse',
+                items: [
+                    { label: 'DATA WAREHOUSE', icon: 'pi pi-fw pi-database', routerLink: ['/pruebas'] }
+                ]
             }
         ];
     }

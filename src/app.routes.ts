@@ -14,6 +14,7 @@ import { GestionDatosServiciosComponent } from './app/gestion-datos-servicios/ge
 
 import { GestionDatosClientesComponent } from './app/gestion-datos-clientes/gestion-datos-clientes.component';
 import { GestionDatosMantenimientoComponent } from './app/gestion-datos-mantenimiento/gestion-datos-mantenimiento.component';
+import { PruebasComponent } from './app/pruebas/pruebas.component';
 
 import { AuthGuard } from './app/guards/auth.guard';
 
@@ -36,6 +37,7 @@ export const appRoutes: Routes = [
             { path: 'gestion-servicios', component: GestionDatosServiciosComponent },
             { path: 'gestion-mantenimientos', component: GestionDatosMantenimientoComponent },
             { path: 'estadistico', component: EstadisticoComponent },
+            { path: 'pruebas', component: PruebasComponent },
         ]
     },
     { path: 'landing', component: Landing },
